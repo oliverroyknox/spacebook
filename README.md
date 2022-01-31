@@ -2,7 +2,7 @@
 
 ## Description
 
-A Facebook clone made in React Native, using a [RESTful API](https://github.com/oliverroyknox/spacebook-api) as a backend. This project my coursework submission for **Mobile App Development** 2021.
+A Facebook clone made in React Native, using a [RESTful API](https://github.com/oliverroyknox/spacebook-api) as a backend. This project is my coursework submission for **Mobile App Development** 2021.
 
 ## Getting Started
 
