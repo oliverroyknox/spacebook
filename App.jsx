@@ -64,12 +64,12 @@ export default function App() {
 
   /**
    * Callback to set `isAuthenticated` state.
+   * @param {string} token Session token granted on successful authentication.
    */
-  const onAuthenticate = () => {
+  const onAuthenticate = (token) => {
     setIsAuthenticated(true);
+    console.log(token); // TODO: Add to persistent storage.
   };
-
-  setTimeout(onAuthenticate, 3000); // TODO: Placeholder for authentication flow.
 
   return (
     <NavigationContainer>
@@ -81,7 +81,7 @@ export default function App() {
         </Tab.Navigator>
       ) : (
         <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginPage} />
+          <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} />
           <Stack.Screen name="Signup" component={SignupPage} />
         </Stack.Navigator>
       )}
