@@ -1,14 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View } from 'react-native';
-import {
-  TextInput, Button, Caption, Title,
-} from 'react-native-paper';
-import { useForm, Controller } from 'react-hook-form';
+import { View, StyleSheet } from 'react-native';
+import { Button, Caption, Title } from 'react-native-paper';
+import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import { login } from '../helpers/requests';
 import capitalise from '../helpers/strings';
+
+import TextInput from '../components/TextInput';
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -19,6 +19,33 @@ const defaultValues = {
   email: '',
   password: '',
 };
+
+const styles = StyleSheet.create({
+  container: {
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 24,
+    backgroundColor: '#fff',
+  },
+  form: {
+    gap: 32,
+    marginBottom: 128,
+  },
+  title: {
+    fontSize: 32,
+    fontWeight: '700',
+    padding: 16,
+  },
+  error: {
+    color: '#ff4646',
+    minHeight: 20,
+  },
+  submit: {
+    marginTop: 32,
+  },
+});
 
 export default function LoginPage({ route }) {
   const { onAuthenticate } = route.params;
@@ -41,30 +68,29 @@ export default function LoginPage({ route }) {
       return onAuthenticate(response.body?.token);
     }
 
-    return console.log(response.message);
+    return console.log(response.message); // TODO: Replace with UI notification.
   };
 
   return (
-    <View>
-      <Title>Login</Title>
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} mode="outlined" label="Email" />
-        )}
-      />
-      {errors.email && <Caption>{capitalise(errors.email.message)}</Caption>}
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} secureTextEntry mode="outlined" label="Password" />
-        )}
-      />
-      {errors.password && <Caption>{capitalise(errors.password.message)}</Caption>}
-      <Button onPress={handleSubmit(onSubmit)} mode="contained">Login</Button>
+    <View style={styles.container}>
+      <View style={styles.form}>
+        <Title style={styles.title}>Login</Title>
+        <View>
+          <TextInput control={control} name="email" label="Email" />
+          <Caption style={styles.error}>
+            {errors.email && capitalise(errors.email.message)}
+          </Caption>
+        </View>
+        <View>
+          <TextInput control={control} name="password" label="Password" secureTextEntry />
+          <Caption style={styles.error}>
+            {errors.password && capitalise(errors.password.message)}
+          </Caption>
+        </View>
+        <Button style={styles.submit} onPress={handleSubmit(onSubmit)} mode="contained">Login</Button>
+      </View>
     </View>
+
   );
 }
 
