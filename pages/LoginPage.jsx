@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import { Button, Caption, Title } from 'react-native-paper';
+import {
+  Button, Caption, Title, Snackbar,
+} from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -25,12 +27,14 @@ const styles = StyleSheet.create({
     height: '100%',
     display: 'flex',
     justifyContent: 'center',
+    alignItems: 'center',
     paddingVertical: 16,
     paddingHorizontal: 24,
     backgroundColor: '#fff',
   },
   form: {
     gap: 32,
+    width: '100%',
     marginBottom: 128,
   },
   title: {
@@ -55,6 +59,14 @@ export default function LoginPage({ route }) {
     resolver: yupResolver(schema),
   });
 
+  const [visible, setVisible] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+
+  /**
+   * Synchronises state when `Snackbar` is dismissed.
+   */
+  const onDismissSnackbar = () => setVisible(false);
+
   /**
     * Handle form submission by logging in a user account and authenticating in the system.
     * @param {Object} data Form data.
@@ -68,7 +80,8 @@ export default function LoginPage({ route }) {
       return onAuthenticate(response.body?.token);
     }
 
-    return console.log(response.message); // TODO: Replace with UI notification.
+    setErrorMessage(capitalise(response.message));
+    return setVisible(true);
   };
 
   return (
@@ -89,6 +102,7 @@ export default function LoginPage({ route }) {
         </View>
         <Button style={styles.submit} onPress={handleSubmit(onSubmit)} mode="contained">Login</Button>
       </View>
+      <Snackbar visible={visible} onDismiss={onDismissSnackbar}>{errorMessage}</Snackbar>
     </View>
 
   );
