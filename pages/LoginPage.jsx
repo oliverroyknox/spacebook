@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { View } from 'react-native';
 import {
-  Button, Text, TextInput, View,
-} from 'react-native';
+  TextInput, Button, Caption, Title,
+} from 'react-native-paper';
 import { useForm, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -45,24 +46,24 @@ export default function LoginPage({ route }) {
 
   return (
     <View>
-      <Text>Login</Text>
+      <Title>Login</Title>
       <Controller
         control={control}
         name="email"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} />
+          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} mode="outlined" label="Email" />
         )}
       />
-      {errors.email && <Text>{capitalise(errors.email.message)}</Text>}
+      {errors.email && <Caption>{capitalise(errors.email.message)}</Caption>}
       <Controller
         control={control}
         name="password"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} secureTextEntry />
+          <TextInput onBlur={onBlur} onChangeText={onChange} value={value} secureTextEntry mode="outlined" label="Password" />
         )}
       />
-      {errors.password && <Text>{capitalise(errors.password.message)}</Text>}
-      <Button title="Submit" onPress={handleSubmit(onSubmit)} />
+      {errors.password && <Caption>{capitalise(errors.password.message)}</Caption>}
+      <Button onPress={handleSubmit(onSubmit)} mode="contained">Login</Button>
     </View>
   );
 }

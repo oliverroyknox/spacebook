@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -72,19 +73,21 @@ export default function App() {
   };
 
   return (
-    <NavigationContainer>
-      { isAuthenticated ? (
-        <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
-          <Stack.Screen name="Profile" component={ProfilePage} />
-          <Stack.Screen name="Search" component={SearchPage} />
-          <Stack.Screen name="Friends" component={FriendsPage} />
-        </Tab.Navigator>
-      ) : (
-        <Stack.Navigator>
-          <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} />
-          <Stack.Screen name="Signup" component={SignupPage} />
-        </Stack.Navigator>
-      )}
-    </NavigationContainer>
+    <PaperProvider>
+      <NavigationContainer>
+        { isAuthenticated ? (
+          <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
+            <Stack.Screen name="Profile" component={ProfilePage} />
+            <Stack.Screen name="Search" component={SearchPage} />
+            <Stack.Screen name="Friends" component={FriendsPage} />
+          </Tab.Navigator>
+        ) : (
+          <Stack.Navigator>
+            <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} />
+            <Stack.Screen name="Signup" component={SignupPage} />
+          </Stack.Navigator>
+        )}
+      </NavigationContainer>
+    </PaperProvider>
   );
 }
