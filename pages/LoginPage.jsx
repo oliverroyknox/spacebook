@@ -68,6 +68,15 @@ export default function LoginPage({ route }) {
   const onDismissSnackbar = () => setVisible(false);
 
   /**
+   * Shows a `Snackbar` with the given message.
+   * @param {string} message Message to display in `Snackbar`.
+   */
+  function showSnackbar(message) {
+    setErrorMessage(capitalise(message));
+    return setVisible(true);
+  }
+
+  /**
     * Handle form submission by logging in a user account and authenticating in the system.
     * @param {Object} data Form data.
     * @param {string} data.email Email for user's account.
@@ -80,8 +89,7 @@ export default function LoginPage({ route }) {
       return onAuthenticate(response.body?.token);
     }
 
-    setErrorMessage(capitalise(response.message));
-    return setVisible(true);
+    return showSnackbar(response.message);
   };
 
   return (
