@@ -10,6 +10,7 @@ import SearchPage from './pages/SearchPage';
 import FriendsPage from './pages/FriendsPage';
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
+import LogoHeader from './components/LogoHeader';
 
 /**
  * @typedef {import("@react-navigation/native").ParamListBase} ParamListBase
@@ -83,7 +84,7 @@ export default function App() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
-            <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} />
+            <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} options={{ headerTitle: LogoHeader }} />
             <Stack.Screen name="Signup" component={SignupPage} />
           </Stack.Navigator>
         )}
