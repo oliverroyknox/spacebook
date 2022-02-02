@@ -2,7 +2,11 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import {
-  Button, Caption, Title, Snackbar,
+  Button,
+  Caption,
+  Title,
+  Paragraph,
+  Snackbar,
 } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -12,10 +16,12 @@ import capitalise from '../helpers/strings';
 
 import TextInput from '../components/TextInput';
 
-const schema = yup.object({
-  email: yup.string().email().required(),
-  password: yup.string().min(8).required(),
-}).required();
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().min(8).required(),
+  })
+  .required();
 
 const defaultValues = {
   email: '',
@@ -28,33 +34,43 @@ const styles = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 24,
+    paddingVertical: 24,
+    paddingHorizontal: 32,
     backgroundColor: '#fff',
   },
   form: {
-    gap: 32,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    gap: 16,
     width: '100%',
-    marginBottom: 128,
+    height: '100%',
+  },
+  formContent: {
+    width: '100%',
+    gap: 8,
   },
   title: {
     fontSize: 32,
     fontWeight: '700',
-    padding: 16,
   },
   error: {
     color: '#ff4646',
     minHeight: 20,
   },
-  submit: {
-    marginTop: 32,
+  signup: {
+    color: '#419cff',
   },
 });
 
-export default function LoginPage({ route }) {
+export default function LoginPage({ navigation, route }) {
   const { onAuthenticate } = route.params;
 
-  const { control, handleSubmit, formState: { errors } } = useForm({
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
     defaultValues,
     resolver: yupResolver(schema),
   });
@@ -68,6 +84,11 @@ export default function LoginPage({ route }) {
   const onDismissSnackbar = () => setVisible(false);
 
   /**
+   * Handle redirect to `Signup` page.
+   */
+  const onSignup = () => navigation.navigate('Signup');
+
+  /**
    * Shows a `Snackbar` with the given message.
    * @param {string} message Message to display in `Snackbar`.
    */
@@ -77,11 +98,11 @@ export default function LoginPage({ route }) {
   }
 
   /**
-    * Handle form submission by logging in a user account and authenticating in the system.
-    * @param {Object} data Form data.
-    * @param {string} data.email Email for user's account.
-    * @param {string} data.password Password for user's account.
-    */
+   * Handle form submission by logging in a user account and authenticating in the system.
+   * @param {Object} data Form data.
+   * @param {string} data.email Email for user's account.
+   * @param {string} data.password Password for user's account.
+   */
   const onSubmit = async ({ email, password }) => {
     const response = await login({ email, password });
 
@@ -96,27 +117,45 @@ export default function LoginPage({ route }) {
     <View style={styles.container}>
       <View style={styles.form}>
         <Title style={styles.title}>Login</Title>
-        <View>
-          <TextInput control={control} name="email" label="Email" />
-          <Caption style={styles.error}>
-            {errors.email && capitalise(errors.email.message)}
-          </Caption>
+        <View style={styles.formContent}>
+          <View>
+            <TextInput control={control} name="email" label="Email" />
+            <Caption style={styles.error}>
+              {errors.email && capitalise(errors.email.message)}
+            </Caption>
+          </View>
+          <View>
+            <TextInput
+              control={control}
+              name="password"
+              label="Password"
+              secureTextEntry
+            />
+            <Caption style={styles.error}>
+              {errors.password && capitalise(errors.password.message)}
+            </Caption>
+          </View>
         </View>
-        <View>
-          <TextInput control={control} name="password" label="Password" secureTextEntry />
-          <Caption style={styles.error}>
-            {errors.password && capitalise(errors.password.message)}
-          </Caption>
+        <View style={styles.formContent}>
+          <Button onPress={handleSubmit(onSubmit)} mode="contained">
+            Login
+          </Button>
+          <Paragraph style={styles.signup} onPress={onSignup}>
+            Or if you don&apos;t have an account, sign up!
+          </Paragraph>
         </View>
-        <Button style={styles.submit} onPress={handleSubmit(onSubmit)} mode="contained">Login</Button>
       </View>
-      <Snackbar visible={visible} onDismiss={onDismissSnackbar}>{errorMessage}</Snackbar>
+      <Snackbar visible={visible} onDismiss={onDismissSnackbar}>
+        {errorMessage}
+      </Snackbar>
     </View>
-
   );
 }
 
 LoginPage.propTypes = {
+  navigation: PropTypes.shape({
+    navigate: PropTypes.func.isRequired,
+  }).isRequired,
   route: PropTypes.shape({
     params: PropTypes.shape({
       onAuthenticate: PropTypes.func.isRequired,
