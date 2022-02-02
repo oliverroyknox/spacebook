@@ -108,13 +108,15 @@ export default function LoginPage({ navigation, route }) {
    * @param {string} data.password Password for user's account.
    */
   const onSubmit = async ({ email, password }) => {
-    const response = await login({ email, password });
-
-    if (response.ok) {
-      return onAuthenticate(response.body?.token);
+    try {
+      const response = await login({ email, password });
+      if (response.ok) {
+        return onAuthenticate(response.body?.token);
+      }
+      return showSnackbar(response.message);
+    } catch (e) {
+      return showSnackbar('failed to reach server.');
     }
-
-    return showSnackbar(response.message);
   };
 
   return (
