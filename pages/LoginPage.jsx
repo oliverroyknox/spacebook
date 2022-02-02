@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 32,
     fontWeight: '700',
+    marginRight: 'auto',
   },
   error: {
     color: '#ff4646',
