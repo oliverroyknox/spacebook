@@ -76,7 +76,7 @@ export default function App() {
   return (
     <PaperProvider>
       <NavigationContainer>
-        { isAuthenticated ? (
+        {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
             <Stack.Screen name="Profile" component={ProfilePage} />
             <Stack.Screen name="Search" component={SearchPage} />
@@ -84,7 +84,12 @@ export default function App() {
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>
-            <Stack.Screen name="Login" component={LoginPage} initialParams={{ onAuthenticate }} options={{ headerTitle: LogoHeader }} />
+            <Stack.Screen
+              name="Login"
+              component={LoginPage}
+              initialParams={{ onAuthenticate }}
+              options={{ headerTitle: LogoHeader }}
+            />
             <Stack.Screen name="Signup" component={SignupPage} />
           </Stack.Navigator>
         )}
