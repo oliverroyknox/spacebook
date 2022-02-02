@@ -108,9 +108,19 @@ export default function App() {
               options={{
                 headerTitle: LogoHeader,
                 headerStyle: { backgroundColor: Theme.colors.header },
+                headerTintColor: Theme.colors.headerText,
               }}
             />
-            <Stack.Screen name="Signup" component={SignupPage} />
+            <Stack.Screen
+              name="Signup"
+              component={SignupPage}
+              initialParams={{ onAuthenticate }}
+              options={{
+                headerTitle: LogoHeader,
+                headerStyle: { backgroundColor: Theme.colors.header },
+                headerTintColor: Theme.colors.headerText,
+              }}
+            />
           </Stack.Navigator>
         )}
       </NavigationContainer>
