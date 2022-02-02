@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { Provider as PaperProvider } from 'react-native-paper';
+import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -61,6 +61,18 @@ const setTabNavigatorScreenOptions = ({ route }) => ({
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
+const Theme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: '#218FFF',
+    error: '#ff4646',
+    page: '#fff',
+    header: '#3d5f7d',
+    headerText: '#fff',
+  },
+};
+
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -74,7 +86,7 @@ export default function App() {
   };
 
   return (
-    <PaperProvider>
+    <PaperProvider theme={Theme}>
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
@@ -88,7 +100,10 @@ export default function App() {
               name="Login"
               component={LoginPage}
               initialParams={{ onAuthenticate }}
-              options={{ headerTitle: LogoHeader }}
+              options={{
+                headerTitle: LogoHeader,
+                headerStyle: { backgroundColor: Theme.colors.header },
+              }}
             />
             <Stack.Screen name="Signup" component={SignupPage} />
           </Stack.Navigator>

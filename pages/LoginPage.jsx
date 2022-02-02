@@ -7,6 +7,7 @@ import {
   Title,
   Paragraph,
   Snackbar,
+  useTheme,
 } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,7 +29,7 @@ const defaultValues = {
   password: '',
 };
 
-const styles = StyleSheet.create({
+const styles = ({ colors }) => StyleSheet.create({
   container: {
     height: '100%',
     display: 'flex',
@@ -36,7 +37,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 24,
     paddingHorizontal: 32,
-    backgroundColor: '#fff',
+    backgroundColor: colors.page,
   },
   form: {
     display: 'flex',
@@ -56,11 +57,11 @@ const styles = StyleSheet.create({
     marginRight: 'auto',
   },
   error: {
-    color: '#ff4646',
+    color: colors.error,
     minHeight: 20,
   },
   signup: {
-    color: '#419cff',
+    color: colors.primary,
   },
 });
 
@@ -75,6 +76,8 @@ export default function LoginPage({ navigation, route }) {
     defaultValues,
     resolver: yupResolver(schema),
   });
+
+  const theme = useTheme();
 
   const [visible, setVisible] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -115,13 +118,13 @@ export default function LoginPage({ navigation, route }) {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.form}>
-        <Title style={styles.title}>Login</Title>
-        <View style={styles.formContent}>
+    <View style={styles(theme).container}>
+      <View style={styles(theme).form}>
+        <Title style={styles(theme).title}>Login</Title>
+        <View style={styles(theme).formContent}>
           <View>
             <TextInput control={control} name="email" label="Email" />
-            <Caption style={styles.error}>
+            <Caption style={styles(theme).error}>
               {errors.email && capitalise(errors.email.message)}
             </Caption>
           </View>
@@ -132,16 +135,16 @@ export default function LoginPage({ navigation, route }) {
               label="Password"
               secureTextEntry
             />
-            <Caption style={styles.error}>
+            <Caption style={styles(theme).error}>
               {errors.password && capitalise(errors.password.message)}
             </Caption>
           </View>
         </View>
-        <View style={styles.formContent}>
+        <View style={styles(theme).formContent}>
           <Button onPress={handleSubmit(onSubmit)} mode="contained">
             Login
           </Button>
-          <Paragraph style={styles.signup} onPress={onSignup}>
+          <Paragraph style={styles(theme).signup} onPress={onSignup}>
             Or if you don&apos;t have an account, sign up!
           </Paragraph>
         </View>
