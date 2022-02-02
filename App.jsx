@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
@@ -80,9 +81,13 @@ export default function App() {
    * Callback to set `isAuthenticated` state.
    * @param {string} token Session token granted on successful authentication.
    */
-  const onAuthenticate = (token) => {
-    setIsAuthenticated(true);
-    console.log(token); // TODO: Add to persistent storage.
+  const onAuthenticate = async (token) => {
+    try {
+      await AsyncStorage.setItem('session_token', token);
+      setIsAuthenticated(true);
+    } catch (e) {
+      setIsAuthenticated(false);
+    }
   };
 
   return (
