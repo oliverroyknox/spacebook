@@ -107,6 +107,7 @@ export default function App() {
               initialParams={{ onAuthenticate }}
               options={{
                 headerTitle: LogoHeader,
+                headerLeft: () => null,
                 headerStyle: { backgroundColor: Theme.colors.header },
                 headerTintColor: Theme.colors.headerText,
               }}
@@ -117,6 +118,7 @@ export default function App() {
               initialParams={{ onAuthenticate }}
               options={{
                 headerTitle: LogoHeader,
+                headerLeft: () => null,
                 headerStyle: { backgroundColor: Theme.colors.header },
                 headerTintColor: Theme.colors.headerText,
               }}
