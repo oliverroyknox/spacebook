@@ -2,80 +2,23 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import {
-  Button,
-  Caption,
-  Title,
-  Paragraph,
   Snackbar,
   useTheme,
 } from 'react-native-paper';
-import { useForm } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { login } from '../helpers/requests';
 import capitalise from '../helpers/strings';
-
-import TextInput from '../components/TextInput';
-
-const schema = yup
-  .object({
-    email: yup.string().email().required(),
-    password: yup.string().min(8).required(),
-  })
-  .required();
-
-const defaultValues = {
-  email: '',
-  password: '',
-};
+import LoginForm from '../components/LoginForm';
 
 const styles = ({ colors }) => StyleSheet.create({
   container: {
     height: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingVertical: 24,
-    paddingHorizontal: 32,
+    flex: 1,
     backgroundColor: colors.page,
-  },
-  form: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-    gap: 16,
-    width: '100%',
-    height: '100%',
-  },
-  formContent: {
-    width: '100%',
-    gap: 8,
-  },
-  title: {
-    fontSize: 32,
-    fontWeight: '700',
-    marginRight: 'auto',
-  },
-  error: {
-    color: colors.error,
-    minHeight: 20,
-  },
-  signup: {
-    color: colors.primary,
   },
 });
 
 export default function LoginPage({ navigation, route }) {
   const { onAuthenticate } = route.params;
-
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues,
-    resolver: yupResolver(schema),
-  });
 
   const theme = useTheme();
 
@@ -90,7 +33,7 @@ export default function LoginPage({ navigation, route }) {
   /**
    * Handle redirect to `Signup` page.
    */
-  const onSignup = () => navigation.navigate('Signup');
+  const onSignupRedirect = () => navigation.navigate('Signup');
 
   /**
    * Shows a `Snackbar` with the given message.
@@ -107,7 +50,7 @@ export default function LoginPage({ navigation, route }) {
    * @param {string} data.email Email for user's account.
    * @param {string} data.password Password for user's account.
    */
-  const onSubmit = async ({ email, password }) => {
+  const onLogin = async ({ email, password }) => {
     try {
       const response = await login({ email, password });
       if (response.ok) {
@@ -121,36 +64,7 @@ export default function LoginPage({ navigation, route }) {
 
   return (
     <View style={styles(theme).container}>
-      <View style={styles(theme).form}>
-        <Title style={styles(theme).title}>Login</Title>
-        <View style={styles(theme).formContent}>
-          <View>
-            <TextInput control={control} name="email" label="Email" />
-            <Caption style={styles(theme).error}>
-              {errors.email && capitalise(errors.email.message)}
-            </Caption>
-          </View>
-          <View>
-            <TextInput
-              control={control}
-              name="password"
-              label="Password"
-              secureTextEntry
-            />
-            <Caption style={styles(theme).error}>
-              {errors.password && capitalise(errors.password.message)}
-            </Caption>
-          </View>
-        </View>
-        <View style={styles(theme).formContent}>
-          <Button onPress={handleSubmit(onSubmit)} mode="contained">
-            Login
-          </Button>
-          <Paragraph style={styles(theme).signup} onPress={onSignup}>
-            Or if you don&apos;t have an account, sign up!
-          </Paragraph>
-        </View>
-      </View>
+      <LoginForm onLogin={onLogin} onSignupRedirect={onSignupRedirect} />
       <Snackbar visible={visible} onDismiss={onDismissSnackbar}>
         {errorMessage}
       </Snackbar>
