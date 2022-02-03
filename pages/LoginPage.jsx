@@ -1,10 +1,7 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import {
-  Snackbar,
-  useTheme,
-} from 'react-native-paper';
+import { Snackbar, useTheme } from 'react-native-paper';
 import { login } from '../helpers/requests';
 import capitalise from '../helpers/strings';
 import LoginForm from '../components/LoginForm';
@@ -54,7 +51,10 @@ export default function LoginPage({ navigation, route }) {
     try {
       const response = await login({ email, password });
       if (response.ok) {
-        return onAuthenticate(response.body?.token);
+        return onAuthenticate({
+          id: response.body?.id,
+          token: response.body?.token,
+        });
       }
       return showSnackbar(response.message);
     } catch (e) {

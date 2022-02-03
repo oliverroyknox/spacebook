@@ -95,7 +95,10 @@ export default function SignupPage({ navigation, route }) {
 
         const loginResponse = await login({ email, password });
         if (loginResponse.ok) {
-          return onAuthenticate(loginResponse.body?.token);
+          return onAuthenticate({
+            id: loginResponse.body?.id,
+            token: loginResponse.body?.token,
+          });
         }
 
         // Fallback to login screen if problem with automatic login request.
@@ -112,7 +115,10 @@ export default function SignupPage({ navigation, route }) {
       <View style={styles(theme).swiperContainer}>
         <SwiperFlatList ref={swiperRef} disableGesture>
           <View style={styles(theme).swiperSlide}>
-            <SignupAuthForm onContinue={onContinue} onLoginRedirect={onLoginRedirect} />
+            <SignupAuthForm
+              onContinue={onContinue}
+              onLoginRedirect={onLoginRedirect}
+            />
           </View>
           <View style={styles(theme).swiperSlide}>
             <SignupDetailsForm onSignup={onSignup} onGoBack={onScrollToPrev} />

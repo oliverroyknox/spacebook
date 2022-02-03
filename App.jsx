@@ -79,10 +79,13 @@ export default function App() {
 
   /**
    * Callback to set `isAuthenticated` state.
+   * @param {Object} userData Authenticated user's data.
+   * @param {string} id ID of the authenticated user.
    * @param {string} token Session token granted on successful authentication.
    */
-  const onAuthenticate = async (token) => {
+  const onAuthenticate = async ({ id, token }) => {
     try {
+      await AsyncStorage.setItem('user_id', id);
       await AsyncStorage.setItem('session_token', token);
       setIsAuthenticated(true);
     } catch (e) {
