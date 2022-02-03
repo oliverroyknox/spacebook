@@ -44,7 +44,7 @@ export default function SignupPage({ navigation, route }) {
   /**
    * Handle redirect to `Login` page.
    */
-  const onLogin = () => navigation.navigate('Login');
+  const onLoginRedirect = () => navigation.navigate('Login');
 
   /**
    * Shows a `Snackbar` with the given message.
@@ -112,7 +112,7 @@ export default function SignupPage({ navigation, route }) {
       <View style={styles(theme).swiperContainer}>
         <SwiperFlatList ref={swiperRef} disableGesture>
           <View style={styles(theme).swiperSlide}>
-            <SignupAuthForm onContinue={onContinue} onLogin={onLogin} />
+            <SignupAuthForm onContinue={onContinue} onLoginRedirect={onLoginRedirect} />
           </View>
           <View style={styles(theme).swiperSlide}>
             <SignupDetailsForm onSignup={onSignup} onGoBack={onScrollToPrev} />

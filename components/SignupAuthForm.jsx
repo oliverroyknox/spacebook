@@ -35,7 +35,7 @@ const styles = ({ colors }) => StyleSheet.create({
   login: { color: colors.primary },
 });
 
-export default function SignupAuthForm({ onContinue, onLogin }) {
+export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
   const {
     control,
     handleSubmit,
@@ -70,7 +70,7 @@ export default function SignupAuthForm({ onContinue, onLogin }) {
         <Button onPress={handleSubmit(onContinue)} mode="contained">
           Continue
         </Button>
-        <Paragraph style={styles(theme).login} onPress={onLogin}>
+        <Paragraph style={styles(theme).login} onPress={onLoginRedirect}>
           Or if you already have an account, login.
         </Paragraph>
       </View>
@@ -80,5 +80,5 @@ export default function SignupAuthForm({ onContinue, onLogin }) {
 
 SignupAuthForm.propTypes = {
   onContinue: PropTypes.func.isRequired,
-  onLogin: PropTypes.func.isRequired,
+  onLoginRedirect: PropTypes.func.isRequired,
 };
