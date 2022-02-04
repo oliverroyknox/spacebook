@@ -1,3 +1,4 @@
+import camelcaseKeys from 'camelcase-keys';
 import { baseUrl } from '../config/server.config.json';
 
 /**
@@ -32,7 +33,7 @@ export async function login({ email, password }) {
       returnValue = {
         ok: true,
         message: 'successful login.',
-        body: await response.json(),
+        body: camelcaseKeys(await response.json()),
       };
       break;
     case 400:
@@ -81,7 +82,7 @@ export async function signup({
       returnValue = {
         ok: true,
         message: 'successful signup.',
-        body: await response.json(),
+        body: camelcaseKeys(await response.json()),
       };
       break;
     case 400:
@@ -152,21 +153,13 @@ export async function getUser({ userId, sessionToken }) {
   let returnValue = null;
 
   switch (response.status) {
-    case 200: {
-      const json = await response.json();
+    case 200:
       returnValue = {
         ok: true,
         message: 'got user data.',
-        body: {
-          id: json.user_id,
-          email: json.email,
-          firstName: json.first_name,
-          lastName: json.last_name,
-          friendCount: json.friend_count,
-        },
+        body: camelcaseKeys(await response.json()),
       };
       break;
-    }
     case 401:
       returnValue = {
         ok: false,
@@ -256,7 +249,7 @@ export async function createPost({ userId, sessionToken, text }) {
       returnValue = {
         ok: true,
         message: 'created a post.',
-        body: await response.json(),
+        body: camelcaseKeys(await response.json()),
       };
       break;
     case 401:
