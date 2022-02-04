@@ -11,9 +11,9 @@ function url(path) {
 
 /**
  * Log a user account in.
- * @param {Object} body Request body.
- * @param {string} body.email Email of user account.
- * @param {string} body.password Password for user account.
+ * @param {Object} request Request data.
+ * @param {string} request.email Email of user account.
+ * @param {string} request.password Password for user account.
  * @returns A parsed response object.
  */
 export async function login({ email, password }) {
@@ -47,11 +47,11 @@ export async function login({ email, password }) {
 
 /**
  * Signs up a new user account.
- * @param {*} body Request body.
- * @param {string} body.email Email of user account.
- * @param {string} body.password Password of user account.
- * @param {string} body.firstName First name of user.
- * @param {string} body.lastName Last name of user.
+ * @param {Object} request Request data.
+ * @param {string} request.email Email of user account.
+ * @param {string} request.password Password of user account.
+ * @param {string} request.firstName First name of user.
+ * @param {string} request.lastName Last name of user.
  * @returns A parsed response object.
  */
 export async function signup({
@@ -87,6 +87,13 @@ export async function signup({
   return returnValue;
 }
 
+/**
+ *
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of user to get profile photo of.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
 export async function getProfilePhoto({ userId, sessionToken }) {
   const response = await fetch(url(`user/${userId}/photo`), {
     headers: {
