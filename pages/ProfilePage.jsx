@@ -77,6 +77,10 @@ export default function ProfilePage({ route }) {
     return setIsSnackbarVisible(true);
   }
 
+  const onEditProfile = () => console.log('editing profile...');
+
+  const onLogout = () => console.log('logging out...');
+
   /**
    * Handles creating a new post in the system.
    * @param {Object} data Post data.
@@ -95,7 +99,12 @@ export default function ProfilePage({ route }) {
 
   return (
     <View style={[PageStyles(theme).page, styles.spacing]}>
-      <ProfileHero profilePhoto={profilePhoto} user={user} />
+      <ProfileHero
+        profilePhoto={profilePhoto}
+        user={user}
+        onEdit={onEditProfile}
+        onLogout={onLogout}
+      />
       <Divider text="Posts" />
       <View style={styles.posts}>
         <PostCompose onPost={onPost} />
