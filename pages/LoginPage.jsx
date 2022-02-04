@@ -19,13 +19,13 @@ export default function LoginPage({ navigation, route }) {
 
   const theme = useTheme();
 
-  const [visible, setVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   /**
    * Synchronises state when `Snackbar` is dismissed.
    */
-  const onDismissSnackbar = () => setVisible(false);
+  const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
   /**
    * Handle redirect to `Signup` page.
@@ -37,8 +37,8 @@ export default function LoginPage({ navigation, route }) {
    * @param {string} message Message to display in `Snackbar`.
    */
   function showSnackbar(message) {
-    setErrorMessage(capitalise(message));
-    return setVisible(true);
+    setSnackbarMessage(capitalise(message));
+    return setIsSnackbarVisible(true);
   }
 
   /**
@@ -65,8 +65,12 @@ export default function LoginPage({ navigation, route }) {
   return (
     <View style={styles(theme).container}>
       <LoginForm onLogin={onLogin} onSignupRedirect={onSignupRedirect} />
-      <Snackbar visible={visible} onDismiss={onDismissSnackbar}>
-        {errorMessage}
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={onDismissSnackbar}
+        duration={2000}
+      >
+        {snackbarMessage}
       </Snackbar>
     </View>
   );

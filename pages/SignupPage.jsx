@@ -33,13 +33,13 @@ export default function SignupPage({ navigation, route }) {
 
   const swiperRef = useRef(null);
 
-  const [visible, setVisible] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   /**
    * Synchronises state when `Snackbar` is dismissed.
    */
-  const onDismissSnackbar = () => setVisible(false);
+  const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
   /**
    * Handle redirect to `Login` page.
@@ -51,8 +51,8 @@ export default function SignupPage({ navigation, route }) {
    * @param {string} message Message to display in `Snackbar`.
    */
   function showSnackbar(message) {
-    setErrorMessage(capitalise(message));
-    return setVisible(true);
+    setSnackbarMessage(capitalise(message));
+    return setIsSnackbarVisible(true);
   }
 
   /**
@@ -125,8 +125,12 @@ export default function SignupPage({ navigation, route }) {
           </View>
         </SwiperFlatList>
       </View>
-      <Snackbar visible={visible} onDismiss={onDismissSnackbar}>
-        {errorMessage}
+      <Snackbar
+        visible={isSnackbarVisible}
+        onDismiss={onDismissSnackbar}
+        duration={2000}
+      >
+        {snackbarMessage}
       </Snackbar>
     </View>
   );

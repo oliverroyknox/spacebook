@@ -93,7 +93,7 @@ export default function ProfilePage({ route }) {
    * @param {string} message Message to display in `Snackbar`.
    */
   function showSnackbar(message) {
-    setSnackbarMessage(message);
+    setSnackbarMessage(capitalise(message));
     return setIsSnackbarVisible(true);
   }
 
@@ -107,9 +107,9 @@ export default function ProfilePage({ route }) {
       const sessionToken = await AsyncStorage.getItem('session_token');
       const response = await createPost({ userId, sessionToken, text });
 
-      return showSnackbar(capitalise(response.message));
+      return showSnackbar(response.message);
     } catch (err) {
-      return showSnackbar(capitalise('failed to reach server'));
+      return showSnackbar('failed to reach server');
     }
   };
 
