@@ -16,8 +16,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
-    padding: 8,
-    gap: 16,
   },
   toolbar: {
     display: 'flex',
@@ -27,6 +25,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   nameContainer: {
+    marginTop: 16,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -71,7 +70,7 @@ export default function ProfileHero({
           <Menu.Item onPress={() => handleMenuPress(onLogout)} icon="log-out" title="Logout" />
         </Menu>
       </View>
-      <Avatar.Image size={128} theme={theme} source={{ uri: profilePhoto }} />
+      <Avatar.Image size={144} theme={theme} source={{ uri: profilePhoto }} />
       <View style={styles.nameContainer}>
         <Headline style={styles.name}>{user?.firstName}</Headline>
         <Headline style={styles.name}>{user?.lastName}</Headline>
