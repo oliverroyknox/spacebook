@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { createPost, getProfilePhoto, getUser } from '../helpers/requests';
+import {
+  createPost, getProfilePhoto, getUser, logout,
+} from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
@@ -22,7 +24,7 @@ const styles = StyleSheet.create({
 });
 
 export default function ProfilePage({ route }) {
-  const { userId } = route.params;
+  const { userId, onUnauthenticate } = route.params;
 
   const theme = useTheme();
 
@@ -79,7 +81,23 @@ export default function ProfilePage({ route }) {
 
   const onEditProfile = () => console.log('editing profile...');
 
-  const onLogout = () => console.log('logging out...');
+  /**
+   * Handles logging out the current user and returning to `login` screen.
+   */
+  const onLogout = async () => {
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const response = await logout({ sessionToken });
+
+      if (response.ok) {
+        return onUnauthenticate();
+      }
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to reach server.');
+    }
+  };
 
   /**
    * Handles creating a new post in the system.
@@ -93,7 +111,7 @@ export default function ProfilePage({ route }) {
 
       return showSnackbar(response.message);
     } catch (err) {
-      return showSnackbar('failed to reach server');
+      return showSnackbar('failed to reach server.');
     }
   };
 
@@ -124,6 +142,7 @@ ProfilePage.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       userId: PropTypes.number.isRequired,
+      onUnauthenticate: PropTypes.func.isRequired,
     }).isRequired,
   }).isRequired,
 };

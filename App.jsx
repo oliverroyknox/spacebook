@@ -104,7 +104,7 @@ export default function App() {
   useEffect(loadSavedCredentials, []);
 
   /**
-   * Callback to set `isAuthenticated` state.
+   * Callback to set `isAuthenticated` state and update persistent storage.
    * @param {Object} userData Authenticated user's data.
    * @param {string} userId ID of the authenticated user.
    * @param {string} sessionToken Token granted on successful authentication.
@@ -121,12 +121,22 @@ export default function App() {
     }
   };
 
+  /**
+   * Callback to set `isAuthenticated` state. Performs the inverse of `onAuthenticate`.
+   */
+  const onUnauthenticate = async () => {
+    await AsyncStorage.removeItem('user_id');
+    await AsyncStorage.removeItem('session_token');
+    setCurrentUserId(-1);
+    setIsAuthenticated(false);
+  };
+
   return (
     <PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
-            <Stack.Screen name="Profile" component={ProfilePage} initialParams={{ userId: currentUserId }} />
+            <Stack.Screen name="Profile" component={ProfilePage} initialParams={{ userId: currentUserId, onUnauthenticate }} />
             <Stack.Screen name="Search" component={SearchPage} />
             <Stack.Screen name="Friends" component={FriendsPage} />
           </Tab.Navigator>

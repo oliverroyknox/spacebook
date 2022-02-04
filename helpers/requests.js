@@ -99,6 +99,43 @@ export async function signup({
 }
 
 /**
+ * Logs out the current user.
+ * @param {Object} request Request data.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
+export async function logout({ sessionToken }) {
+  const response = await fetch(url('logout'), {
+    method: 'POST',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'successful logout.' };
+      break;
+    case 401:
+      returnValue = {
+        ok: false,
+        message: 'not authorised to perform this action.',
+      };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Get user data.
  * @param {Object} request Request data.
  * @param {string} userId ID of user to get.
@@ -131,7 +168,10 @@ export async function getUser({ userId, sessionToken }) {
       break;
     }
     case 401:
-      returnValue = { ok: false, message: 'unauthorised user.' };
+      returnValue = {
+        ok: false,
+        message: 'unauthorised to perform this action.',
+      };
       break;
     case 404:
       returnValue = { ok: false, message: 'no user data found.' };
@@ -172,7 +212,10 @@ export async function getProfilePhoto({ userId, sessionToken }) {
       };
       break;
     case 401:
-      returnValue = { ok: false, message: 'unauthorised user.' };
+      returnValue = {
+        ok: false,
+        message: 'unauthorised to perform this action.',
+      };
       break;
     case 404:
       returnValue = { ok: false, message: 'no profile picture found.' };
