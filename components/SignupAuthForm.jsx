@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import {
   Title,
   Caption,
@@ -12,7 +12,9 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import capitalise from '../helpers/strings';
-import formStyles from '../styles/form';
+import FormStyles from '../styles/form';
+import ErrorStyles from '../styles/error';
+import LinkStyles from '../styles/link';
 import TextInput from './TextInput';
 
 const schema = yup
@@ -27,14 +29,6 @@ const defaultValues = {
   password: '',
 };
 
-const styles = ({ colors }) => StyleSheet.create({
-  error: {
-    color: colors.error,
-    minHeight: 20,
-  },
-  login: { color: colors.primary },
-});
-
 export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
   const {
     control,
@@ -45,12 +39,12 @@ export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
   const theme = useTheme();
 
   return (
-    <View style={formStyles.container}>
-      <Title style={formStyles.title}>Sign Up</Title>
-      <View style={formStyles.content}>
+    <View style={FormStyles.container}>
+      <Title style={FormStyles.title}>Sign Up</Title>
+      <View style={FormStyles.content}>
         <View>
           <TextInput control={control} name="email" label="Email" />
-          <Caption style={styles(theme).error}>
+          <Caption style={ErrorStyles(theme).caption}>
             {errors.email && capitalise(errors.email.message)}
           </Caption>
         </View>
@@ -61,16 +55,16 @@ export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
             label="Password"
             secureTextEntry
           />
-          <Caption style={styles(theme).error}>
+          <Caption style={ErrorStyles(theme).caption}>
             {errors.password && capitalise(errors.password.message)}
           </Caption>
         </View>
       </View>
-      <View style={formStyles.content}>
+      <View style={FormStyles.content}>
         <Button onPress={handleSubmit(onContinue)} mode="contained">
           Continue
         </Button>
-        <Paragraph style={styles(theme).login} onPress={onLoginRedirect}>
+        <Paragraph style={LinkStyles(theme).text} onPress={onLoginRedirect}>
           Or if you already have an account, login.
         </Paragraph>
       </View>

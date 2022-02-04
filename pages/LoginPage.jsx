@@ -1,18 +1,11 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
 import { login } from '../helpers/requests';
 import capitalise from '../helpers/strings';
+import PageStyles from '../styles/page';
 import LoginForm from '../components/LoginForm';
-
-const styles = ({ colors }) => StyleSheet.create({
-  container: {
-    height: '100%',
-    flex: 1,
-    backgroundColor: colors.page,
-  },
-});
 
 export default function LoginPage({ navigation, route }) {
   const { onAuthenticate } = route.params;
@@ -63,7 +56,7 @@ export default function LoginPage({ navigation, route }) {
   };
 
   return (
-    <View style={styles(theme).container}>
+    <View style={PageStyles(theme).page}>
       <LoginForm onLogin={onLogin} onSignupRedirect={onSignupRedirect} />
       <Snackbar
         visible={isSnackbarVisible}

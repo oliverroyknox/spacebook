@@ -12,7 +12,8 @@ import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import capitalise from '../helpers/strings';
-import formStyles from '../styles/form';
+import FormStyles from '../styles/form';
+import ErrorStyles from '../styles/error';
 import TextInput from './TextInput';
 
 const schema = yup
@@ -27,16 +28,12 @@ const defaultValues = {
   lastName: '',
 };
 
-const styles = ({ colors }) => StyleSheet.create({
+const styles = StyleSheet.create({
   titleContainer: {
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
     gap: 8,
-  },
-  error: {
-    color: colors.error,
-    minHeight: 20,
   },
   signup: {
     marginBottom: 32,
@@ -53,27 +50,27 @@ export default function SignupDetailsForm({ onSignup, onGoBack }) {
   const theme = useTheme();
 
   return (
-    <View style={formStyles.container}>
-      <View style={styles(theme).titleContainer}>
+    <View style={FormStyles.container}>
+      <View style={styles.titleContainer}>
         { onGoBack && <Ionicons name="arrow-back" size={32} color="black" onPress={onGoBack} /> }
-        <Title style={formStyles.title}>Details</Title>
+        <Title style={FormStyles.title}>Details</Title>
       </View>
-      <View style={formStyles.content}>
+      <View style={FormStyles.content}>
         <View>
           <TextInput control={control} name="firstName" label="First Name" />
-          <Caption style={styles(theme).error}>
+          <Caption style={ErrorStyles(theme).caption}>
             {errors.firstName && capitalise(errors.firstName.message)}
           </Caption>
         </View>
         <View>
           <TextInput control={control} name="lastName" label="Last Name" />
-          <Caption style={styles(theme).error}>
+          <Caption style={ErrorStyles(theme).caption}>
             {errors.lastName && capitalise(errors.lastName.message)}
           </Caption>
         </View>
       </View>
-      <View style={formStyles.content}>
-        <Button style={styles(theme).signup} onPress={handleSubmit(onSignup)} mode="contained">
+      <View style={FormStyles.content}>
+        <Button style={styles.signup} onPress={handleSubmit(onSignup)} mode="contained">
           Continue
         </Button>
       </View>

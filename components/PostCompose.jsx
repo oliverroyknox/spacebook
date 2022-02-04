@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import {
-  Card, TextInput, Button, useTheme,
+  Card, TextInput, Button,
 } from 'react-native-paper';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -10,11 +10,7 @@ import * as yup from 'yup';
 
 const schema = yup.object({ text: yup.string().required() });
 
-const styles = ({ colors }) => StyleSheet.create({
-  errors: {
-    color: colors.error,
-    minHeight: 20,
-  },
+const styles = StyleSheet.create({
   actions: {
     marginLeft: 'auto',
   },
@@ -28,8 +24,6 @@ export default function PostCompose({ onPost }) {
     defaultValues: { text: '' },
     resolver: yupResolver(schema),
   });
-
-  const theme = useTheme();
 
   /**
    * Handle resetting form before `onPost` callback.
@@ -59,10 +53,10 @@ export default function PostCompose({ onPost }) {
           )}
         />
       </Card.Content>
-      <Card.Actions style={styles(theme).actions}>
+      <Card.Actions style={styles.actions}>
         <Button
           icon="send"
-          contentStyle={styles(theme).button}
+          contentStyle={styles.button}
           onPress={handleSubmit(onPostWithReset)}
         >
           Post

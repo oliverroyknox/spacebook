@@ -5,17 +5,13 @@ import { Snackbar, useTheme } from 'react-native-paper';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import capitalise from '../helpers/strings';
 import { login, signup } from '../helpers/requests';
+import PageStyles from '../styles/page';
 import SignupAuthForm from '../components/SignupAuthForm';
 import SignupDetailsForm from '../components/SignupDetailsForm';
 
 const { width } = Dimensions.get('window');
 
-const styles = ({ colors }) => StyleSheet.create({
-  container: {
-    height: '100%',
-    flex: 1,
-    backgroundColor: colors.page,
-  },
+const styles = StyleSheet.create({
   swiperContainer: {
     flex: 1,
   },
@@ -111,16 +107,16 @@ export default function SignupPage({ navigation, route }) {
   };
 
   return (
-    <View style={styles(theme).container}>
-      <View style={styles(theme).swiperContainer}>
+    <View style={PageStyles(theme).page}>
+      <View style={styles.swiperContainer}>
         <SwiperFlatList ref={swiperRef} disableGesture>
-          <View style={styles(theme).swiperSlide}>
+          <View style={styles.swiperSlide}>
             <SignupAuthForm
               onContinue={onContinue}
               onLoginRedirect={onLoginRedirect}
             />
           </View>
-          <View style={styles(theme).swiperSlide}>
+          <View style={styles.swiperSlide}>
             <SignupDetailsForm onSignup={onSignup} onGoBack={onScrollToPrev} />
           </View>
         </SwiperFlatList>

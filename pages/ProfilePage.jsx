@@ -7,16 +7,12 @@ import {
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createPost, getProfilePhoto, getUser } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
+import capitalise from '../helpers/strings';
+import PageStyles from '../styles/page';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
-import capitalise from '../helpers/strings';
 
-const styles = ({ colors }) => StyleSheet.create({
-  container: {
-    height: '100%',
-    flex: 1,
-    backgroundColor: colors.page,
-  },
+const styles = StyleSheet.create({
   details: {
     height: '33%',
     width: '100%',
@@ -114,16 +110,16 @@ export default function ProfilePage({ route }) {
   };
 
   return (
-    <View style={styles(theme).container}>
-      <View style={styles(theme).details}>
+    <View style={PageStyles(theme).page}>
+      <View style={styles.details}>
         <Avatar.Image size={128} theme={theme} source={{ uri: profilePhoto }} />
-        <View style={styles(theme).nameContainer}>
-          <Headline style={styles(theme).name}>{user?.first_name}</Headline>
-          <Headline style={styles(theme).name}>{user?.last_name}</Headline>
+        <View style={styles.nameContainer}>
+          <Headline style={styles.name}>{user?.first_name}</Headline>
+          <Headline style={styles.name}>{user?.last_name}</Headline>
         </View>
         <Divider text="Posts" />
       </View>
-      <View style={styles(theme).posts}>
+      <View style={styles.posts}>
         <PostCompose onPost={onPost} />
       </View>
       <Snackbar
