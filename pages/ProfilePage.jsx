@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { Image, View, StyleSheet } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View, StyleSheet } from 'react-native';
+import { Avatar, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getProfilePhoto } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
@@ -49,8 +49,9 @@ export default function ProfilePage({ route }) {
   return (
     <View style={styles(theme).container}>
       <View style={styles(theme).details}>
-        <Image
-          style={{ width: 128, height: 128 }}
+        <Avatar.Image
+          size={128}
+          theme={theme}
           source={{ uri: profilePhoto }}
         />
       </View>
