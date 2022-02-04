@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getUser } from './helpers/requests';
 
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
@@ -76,7 +77,25 @@ const Theme = {
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUserId, setCurrentUserId] = useState('');
+  const [currentUserId, setCurrentUserId] = useState(-1);
+
+  /**
+   * Loads saved user login credentials to skip sign in process.
+   */
+  const loadSavedCredentials = async () => {
+    const userId = await AsyncStorage.getItem('user_id');
+    const sessionToken = await AsyncStorage.getItem('session_token');
+
+    if (userId && sessionToken) {
+      const { ok } = await getUser({ userId, sessionToken });
+      if (!ok) return;
+
+      setCurrentUserId(Number(userId));
+      setIsAuthenticated(true);
+    }
+  };
+
+  useEffect(loadSavedCredentials, []);
 
   /**
    * Callback to set `isAuthenticated` state.
@@ -91,7 +110,7 @@ export default function App() {
       setCurrentUserId(userId);
       setIsAuthenticated(true);
     } catch (e) {
-      setCurrentUserId('');
+      setCurrentUserId(-1);
       setIsAuthenticated(false);
     }
   };

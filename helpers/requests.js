@@ -88,7 +88,44 @@ export async function signup({
 }
 
 /**
- *
+ * Get user data.
+ * @param {Object} request Request data.
+ * @param {string} userId ID of user to get.
+ * @param {string} sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
+export async function getUser({ userId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}`), {
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'got user data.', body: await response.json() };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'unauthorised user.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no user data found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
+ * Get profile photo of user.
  * @param {Object} request Request data.
  * @param {string} request.userId ID of user to get profile photo of.
  * @param {string} request.sessionToken Authorisation token from logged in user.
