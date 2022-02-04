@@ -48,6 +48,10 @@ function renderTabBarIcon(route, options) {
   return <Ionicons name={icon} size={size} color={color} />;
 }
 
+const renderIonicon = ({
+  name, color, size, direction,
+}) => <Ionicons name={name} color={color} size={size} direction={direction} />;
+
 /**
  * Sets the screen options for the tab navigator component.
  * @param {Object} options Navigator options.
@@ -117,7 +121,7 @@ export default function App() {
   };
 
   return (
-    <PaperProvider theme={Theme}>
+    <PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>

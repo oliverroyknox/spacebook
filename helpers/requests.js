@@ -160,3 +160,44 @@ export async function getProfilePhoto({ userId, sessionToken }) {
 
   return returnValue;
 }
+
+/**
+ * Create a new post on the given user's profile.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of the user to create a post on their page.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @param {string} request.text Text contents of the post.
+ * @returns A parsed response object.
+ */
+export async function createPost({ userId, sessionToken, text }) {
+  const response = await fetch(url(`user/${userId}/post`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': sessionToken,
+    },
+    body: JSON.stringify({ text }),
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 201:
+      returnValue = { ok: true, message: 'created a post.', body: await response.json() };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no user data found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
