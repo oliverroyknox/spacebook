@@ -1,35 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
-import {
-  Avatar, Headline, Snackbar, useTheme,
-} from 'react-native-paper';
+import { Snackbar, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createPost, getProfilePhoto, getUser } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
+import ProfileHero from '../components/ProfileHero';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 
 const styles = StyleSheet.create({
-  details: {
-    height: '33%',
-    width: '100%',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-evenly',
-  },
-  nameContainer: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
+  spacing: {
     gap: 16,
-  },
-  name: {
-    fontSize: 28,
   },
   posts: {
     height: '100%',
@@ -110,15 +94,9 @@ export default function ProfilePage({ route }) {
   };
 
   return (
-    <View style={PageStyles(theme).page}>
-      <View style={styles.details}>
-        <Avatar.Image size={128} theme={theme} source={{ uri: profilePhoto }} />
-        <View style={styles.nameContainer}>
-          <Headline style={styles.name}>{user?.first_name}</Headline>
-          <Headline style={styles.name}>{user?.last_name}</Headline>
-        </View>
-        <Divider text="Posts" />
-      </View>
+    <View style={[PageStyles(theme).page, styles.spacing]}>
+      <ProfileHero profilePhoto={profilePhoto} user={user} />
+      <Divider text="Posts" />
       <View style={styles.posts}>
         <PostCompose onPost={onPost} />
       </View>

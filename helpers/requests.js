@@ -29,7 +29,11 @@ export async function login({ email, password }) {
 
   switch (response.status) {
     case 200:
-      returnValue = { ok: true, message: 'successful login.', body: await response.json() };
+      returnValue = {
+        ok: true,
+        message: 'successful login.',
+        body: await response.json(),
+      };
       break;
     case 400:
       returnValue = { ok: false, message: 'invalid email or password.' };
@@ -63,7 +67,10 @@ export async function signup({
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      email, password, first_name: firstName, last_name: lastName,
+      email,
+      password,
+      first_name: firstName,
+      last_name: lastName,
     }),
   });
 
@@ -71,7 +78,11 @@ export async function signup({
 
   switch (response.status) {
     case 201:
-      returnValue = { ok: true, message: 'successful signup.', body: await response.json() };
+      returnValue = {
+        ok: true,
+        message: 'successful signup.',
+        body: await response.json(),
+      };
       break;
     case 400:
       returnValue = { ok: false, message: 'invalid registration details.' };
@@ -104,9 +115,21 @@ export async function getUser({ userId, sessionToken }) {
   let returnValue = null;
 
   switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'got user data.', body: await response.json() };
+    case 200: {
+      const json = await response.json();
+      returnValue = {
+        ok: true,
+        message: 'got user data.',
+        body: {
+          id: json.user_id,
+          email: json.email,
+          firstName: json.first_name,
+          lastName: json.last_name,
+          friendCount: json.friend_count,
+        },
+      };
       break;
+    }
     case 401:
       returnValue = { ok: false, message: 'unauthorised user.' };
       break;
@@ -142,7 +165,11 @@ export async function getProfilePhoto({ userId, sessionToken }) {
 
   switch (response.status) {
     case 200:
-      returnValue = { ok: true, message: 'got user profile picture.', body: await response.blob() };
+      returnValue = {
+        ok: true,
+        message: 'got user profile picture.',
+        body: await response.blob(),
+      };
       break;
     case 401:
       returnValue = { ok: false, message: 'unauthorised user.' };
@@ -183,10 +210,17 @@ export async function createPost({ userId, sessionToken, text }) {
 
   switch (response.status) {
     case 201:
-      returnValue = { ok: true, message: 'created a post.', body: await response.json() };
+      returnValue = {
+        ok: true,
+        message: 'created a post.',
+        body: await response.json(),
+      };
       break;
     case 401:
-      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      returnValue = {
+        ok: false,
+        message: 'not authorised to perform this action.',
+      };
       break;
     case 404:
       returnValue = { ok: false, message: 'no user data found.' };
