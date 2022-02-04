@@ -62,6 +62,7 @@ const setTabNavigatorScreenOptions = ({ route }) => ({
   tabBarIcon: (options) => renderTabBarIcon(route, options),
   tabBarLabelPosition: 'below-icon',
   tabBarStyle: { marginBottom: '4px' },
+  headerShown: false,
 });
 
 const Stack = createNativeStackNavigator();
