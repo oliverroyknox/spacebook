@@ -76,6 +76,7 @@ const Theme = {
 
 export default function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState('');
 
   /**
    * Callback to set `isAuthenticated` state.
@@ -87,8 +88,10 @@ export default function App() {
     try {
       await AsyncStorage.setItem('user_id', userId);
       await AsyncStorage.setItem('session_token', sessionToken);
+      setCurrentUserId(userId);
       setIsAuthenticated(true);
     } catch (e) {
+      setCurrentUserId('');
       setIsAuthenticated(false);
     }
   };
@@ -98,7 +101,7 @@ export default function App() {
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
-            <Stack.Screen name="Profile" component={ProfilePage} />
+            <Stack.Screen name="Profile" component={ProfilePage} initialParams={{ userId: currentUserId }} />
             <Stack.Screen name="Search" component={SearchPage} />
             <Stack.Screen name="Friends" component={FriendsPage} />
           </Tab.Navigator>

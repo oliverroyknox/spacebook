@@ -86,3 +86,33 @@ export async function signup({
 
   return returnValue;
 }
+
+export async function getProfilePhoto({ userId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/photo`), {
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'got user profile picture.', body: await response.blob() };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'unauthorised user.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no profile picture found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
