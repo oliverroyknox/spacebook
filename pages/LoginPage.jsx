@@ -52,8 +52,8 @@ export default function LoginPage({ navigation, route }) {
       const response = await login({ email, password });
       if (response.ok) {
         return onAuthenticate({
-          id: response.body?.id,
-          token: response.body?.token,
+          userId: response.body?.id,
+          sessionToken: response.body?.token,
         });
       }
       return showSnackbar(response.message);

@@ -96,8 +96,8 @@ export default function SignupPage({ navigation, route }) {
         const loginResponse = await login({ email, password });
         if (loginResponse.ok) {
           return onAuthenticate({
-            id: loginResponse.body?.id,
-            token: loginResponse.body?.token,
+            userId: loginResponse.body?.id,
+            sessionToken: loginResponse.body?.token,
           });
         }
 
