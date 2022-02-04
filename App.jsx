@@ -70,6 +70,7 @@ const Theme = {
     primary: '#218FFF',
     error: '#ff4646',
     page: '#fff',
+    divider: '#dcdcdc',
     header: '#3d5f7d',
     headerText: '#fff',
   },
