@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, FlatList, StyleSheet } from 'react-native';
-import { Snackbar, useTheme } from 'react-native-paper';
+import {
+  Portal, Modal, Snackbar, useTheme,
+} from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createPost,
@@ -9,6 +11,7 @@ import {
   getUser,
   getPosts,
   logout,
+  getPost,
 } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -29,6 +32,9 @@ const styles = StyleSheet.create({
     gap: 16,
     paddingBottom: 16,
   },
+  modalContent: {
+    marginHorizontal: 32,
+  },
 });
 
 export default function ProfilePage({ route }) {
@@ -39,6 +45,8 @@ export default function ProfilePage({ route }) {
   const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [posts, setPosts] = useState([]);
+  const [focusedPost, setFocusedPost] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
@@ -89,6 +97,15 @@ export default function ProfilePage({ route }) {
   }, []);
 
   /**
+   * Synchronises state when `Modal` is dismissed.
+   */
+  const onDismissModal = () => {
+    setIsModalVisible(false);
+
+    if (focusedPost) setFocusedPost(null);
+  };
+
+  /**
    * Synchronises state when `Snackbar` is dismissed.
    */
   const onDismissSnackbar = () => setIsSnackbarVisible(false);
@@ -102,6 +119,27 @@ export default function ProfilePage({ route }) {
     return setIsSnackbarVisible(true);
   }
 
+  /**
+   * Shows a `Modal` to display a post.
+   * @param {Object} data Callback data.
+   * @param {Object} data.post A focused post to show in the `Modal`.
+   * @param {number} data.post.postId The ID of the focused post.
+   */
+  const onShowPostModal = async ({ post: { postId } }) => {
+    const sessionToken = await AsyncStorage.getItem('session_token');
+    const response = await getPost({ userId, postId, sessionToken });
+
+    if (response.ok) {
+      setIsModalVisible(true);
+      return setFocusedPost(response.body);
+    }
+
+    return showSnackbar(response.message);
+  };
+
+  /**
+   * Handles starting a session to edit a profile.
+   */
   const onEditProfile = () => console.log('editing profile...');
 
   /**
@@ -141,9 +179,19 @@ export default function ProfilePage({ route }) {
     }
   };
 
+  /**
+   * Handles liking and unliking a post.
+   * @param {Object} data Data from callback.
+   * @param {Object} post Post that was liked.
+   */
   const onLike = ({ post }) => console.log('liked post ', post);
 
-  const renderPosts = ({ item: post }) => <Post post={post} onLike={onLike} />;
+  /**
+   * Renders posts in a list.
+   */
+  const renderPosts = ({ item: post }) => (
+    <Post post={post} onLike={onLike} onPress={onShowPostModal} />
+  );
 
   return (
     <View style={[PageStyles(theme).page, styles.spacing]}>
@@ -162,6 +210,15 @@ export default function ProfilePage({ route }) {
         renderItem={renderPosts}
         keyExtractor={(item) => item.postId}
       />
+      <Portal>
+        <Modal
+          visible={isModalVisible}
+          onDismiss={onDismissModal}
+          contentContainerStyle={styles.modalContent}
+        >
+          {focusedPost && <Post post={focusedPost} onLike={onLike} isFocused />}
+        </Modal>
+      </Portal>
       <Snackbar
         visible={isSnackbarVisible}
         onDismiss={onDismissSnackbar}

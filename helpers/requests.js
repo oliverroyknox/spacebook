@@ -311,3 +311,44 @@ export async function createPost({ userId, sessionToken, text }) {
 
   return returnValue;
 }
+
+/**
+ * Get a post on a given user's profile.
+ * @param {Object} request Request data.
+ * @param {string} userId ID of the user to create a post on their page.
+ * @param {string} postId ID of the post to get.
+ * @param {string} sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
+export async function getPost({ userId, postId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/post/${postId}`), {
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'got post.', body: camelcase(await response.json(), { deep: true }) };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'can only view the posts of yourself or your friends.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no post found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}

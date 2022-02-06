@@ -6,7 +6,7 @@ import {
 } from 'react-native-paper';
 
 const styles = StyleSheet.create({
-  text: {
+  overflow: {
     display: '-webkit-box',
     '-webkit-line-clamp': '3',
     '-webkit-box-orient': 'vertical',
@@ -25,13 +25,15 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function Post({ post, onLike }) {
+export default function Post({
+  post, onLike, onPress, isFocused,
+}) {
   function formatDate(unix) {
     return new Date(unix).toLocaleString('en-GB');
   }
 
   return (
-    <Card mode="outlined">
+    <Card mode="outlined" onPress={() => onPress({ post })}>
       <Card.Content>
         <Caption>
           {post.author.firstName}
@@ -42,7 +44,7 @@ export default function Post({ post, onLike }) {
           {' '}
           {formatDate(post.timestamp)}
         </Caption>
-        <Paragraph style={styles.text}>{post.text}</Paragraph>
+        <Paragraph style={!isFocused && styles.overflow}>{post.text}</Paragraph>
       </Card.Content>
       <Card.Actions style={styles.actions}>
 
@@ -69,4 +71,11 @@ Post.propTypes = {
     numLikes: PropTypes.number.isRequired,
   }).isRequired,
   onLike: PropTypes.func.isRequired,
+  onPress: PropTypes.func,
+  isFocused: PropTypes.bool,
+};
+
+Post.defaultProps = {
+  onPress: () => null,
+  isFocused: false,
 };
