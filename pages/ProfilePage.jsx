@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View, FlatList, StyleSheet } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
-  createPost, getProfilePhoto, getUser, logout,
+  createPost,
+  getProfilePhoto,
+  getUser,
+  getPosts,
+  logout,
 } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -12,14 +16,18 @@ import PageStyles from '../styles/page';
 import ProfileHero from '../components/ProfileHero';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
+import Post from '../components/Post';
 
 const styles = StyleSheet.create({
   spacing: {
     gap: 16,
   },
-  posts: {
-    height: '100%',
+  postList: {
     paddingHorizontal: 16,
+  },
+  postListContent: {
+    gap: 16,
+    paddingBottom: 16,
   },
 });
 
@@ -30,13 +38,14 @@ export default function ProfilePage({ route }) {
 
   const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState('');
+  const [posts, setPosts] = useState([]);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
   /**
    * Gets the specified user's information.
    * @param {Object} userData Requested user data to get another user.
-   * @param {string} sessionToken Logged in user's authorisation token.
+   * @param {string} userData.sessionToken Logged in user's authorisation token.
    */
   async function loadUser({ sessionToken }) {
     const { ok, body } = await getUser({ userId, sessionToken });
@@ -49,7 +58,7 @@ export default function ProfilePage({ route }) {
   /**
    * Gets the user's profile photo and set it's data URL to state.
    * @param {Object} userData Required user data to get profile photo.
-   * @param {string} sessionToken Logged in user's authorisation token.
+   * @param {string} userData.sessionToken Logged in user's authorisation token.
    */
   async function loadProfilePhoto({ sessionToken }) {
     const { ok, body } = await getProfilePhoto({ userId, sessionToken });
@@ -59,10 +68,24 @@ export default function ProfilePage({ route }) {
     }
   }
 
+  /**
+   * Gets the posts on the user's profile.
+   * @param {Object} userData Requested user data to get another user.
+   * @param {string} userData.sessionToken Logged in user's authorisation token.
+   */
+  async function loadPosts({ sessionToken }) {
+    const { ok, body } = await getPosts({ userId, sessionToken });
+
+    if (ok) {
+      setPosts(body);
+    }
+  }
+
   useEffect(async () => {
     const sessionToken = await AsyncStorage.getItem('session_token');
     await loadUser({ sessionToken });
     await loadProfilePhoto({ sessionToken });
+    await loadPosts({ sessionToken });
   }, []);
 
   /**
@@ -109,11 +132,18 @@ export default function ProfilePage({ route }) {
       const sessionToken = await AsyncStorage.getItem('session_token');
       const response = await createPost({ userId, sessionToken, text });
 
+      // Reload state with new post.
+      await loadPosts({ sessionToken });
+
       return showSnackbar(response.message);
     } catch (err) {
       return showSnackbar('failed to reach server.');
     }
   };
+
+  const onLike = ({ post }) => console.log('liked post ', post);
+
+  const renderPosts = ({ item: post }) => <Post post={post} onLike={onLike} />;
 
   return (
     <View style={[PageStyles(theme).page, styles.spacing]}>
@@ -124,9 +154,14 @@ export default function ProfilePage({ route }) {
         onLogout={onLogout}
       />
       <Divider text="Posts" />
-      <View style={styles.posts}>
-        <PostCompose onPost={onPost} />
-      </View>
+      <FlatList
+        style={styles.postList}
+        contentContainerStyle={styles.postListContent}
+        data={posts}
+        ListHeaderComponent={<PostCompose onPost={onPost} />}
+        renderItem={renderPosts}
+        keyExtractor={(item) => item.postId}
+      />
       <Snackbar
         visible={isSnackbarVisible}
         onDismiss={onDismissSnackbar}

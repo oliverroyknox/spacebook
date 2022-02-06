@@ -1,4 +1,4 @@
-import camelcaseKeys from 'camelcase-keys';
+import camelcase from 'camelcase-keys';
 import { baseUrl } from '../config/server.config.json';
 
 /**
@@ -33,7 +33,7 @@ export async function login({ email, password }) {
       returnValue = {
         ok: true,
         message: 'successful login.',
-        body: camelcaseKeys(await response.json()),
+        body: camelcase(await response.json()),
       };
       break;
     case 400:
@@ -82,7 +82,7 @@ export async function signup({
       returnValue = {
         ok: true,
         message: 'successful signup.',
-        body: camelcaseKeys(await response.json()),
+        body: camelcase(await response.json()),
       };
       break;
     case 400:
@@ -157,7 +157,7 @@ export async function getUser({ userId, sessionToken }) {
       returnValue = {
         ok: true,
         message: 'got user data.',
-        body: camelcaseKeys(await response.json()),
+        body: camelcase(await response.json()),
       };
       break;
     case 401:
@@ -225,6 +225,46 @@ export async function getProfilePhoto({ userId, sessionToken }) {
 }
 
 /**
+ * Get a list of posts for a given user.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of user to get posts of.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
+export async function getPosts({ userId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/post`), {
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'got posts.', body: camelcase(await response.json(), { deep: true }) };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'can only view the posts of yourself or your friends.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no posts found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Create a new post on the given user's profile.
  * @param {Object} request Request data.
  * @param {string} request.userId ID of the user to create a post on their page.
@@ -249,7 +289,7 @@ export async function createPost({ userId, sessionToken, text }) {
       returnValue = {
         ok: true,
         message: 'created a post.',
-        body: camelcaseKeys(await response.json()),
+        body: camelcase(await response.json()),
       };
       break;
     case 401:
