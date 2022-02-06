@@ -12,6 +12,8 @@ import {
   getPosts,
   logout,
   getPost,
+  likePost,
+  unlikePost,
 } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -183,8 +185,25 @@ export default function ProfilePage({ route }) {
    * Handles liking and unliking a post.
    * @param {Object} data Data from callback.
    * @param {Object} post Post that was liked.
+   * @param {string} post.postId ID of post that was liked.
    */
-  const onLike = ({ post }) => console.log('liked post ', post);
+  const onLike = async ({ post: { postId } }) => {
+    const sessionToken = await AsyncStorage.getItem('session_token');
+    const likeResponse = await likePost({ userId, postId, sessionToken });
+
+    if (!likeResponse.ok && likeResponse.body?.isAlreadyLiked === true) {
+      // If already liked then try an unlike post.
+      const unlikeResponse = await unlikePost({ userId, postId, sessionToken });
+
+      if (!unlikeResponse.ok) {
+        return showSnackbar(unlikeResponse.message);
+      }
+    } else {
+      return showSnackbar(likeResponse.message);
+    }
+
+    return loadPosts({ sessionToken });
+  };
 
   /**
    * Renders posts in a list.

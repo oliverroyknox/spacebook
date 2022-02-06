@@ -352,3 +352,91 @@ export async function getPost({ userId, postId, sessionToken }) {
 
   return returnValue;
 }
+
+/**
+ * Likes a post on a user's profile.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of the user's profile.
+ * @param {string} request.postId ID of post to like.
+ * @returns A parsed response object.
+ */
+export async function likePost({ userId, postId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
+    method: 'POST',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'liked post.', body: await response.json() };
+      break;
+    case 400:
+      returnValue = { ok: false, message: 'this post has already been liked.', body: { isAlreadyLiked: true } };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'can only like friends posts.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no post found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
+ * Unlikes a post on a user's profile.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of the user's profile.
+ * @param {string} request.postId ID of post to unlike.
+ * @returns A parsed response object.
+ */
+export async function unlikePost({ userId, postId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
+    method: 'DELETE',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'unliked post.', body: await response.json() };
+      break;
+    case 400:
+      returnValue = { ok: false, message: 'this post has already been unliked.', body: { isAlreadyUnliked: true } };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'can only like friends posts.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no post found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
