@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { StyleSheet } from 'react-native';
 import {
-  Card, Caption, Paragraph, Button, Badge,
+  Card, Caption, Paragraph, Button, Badge, Menu, IconButton, useTheme,
 } from 'react-native-paper';
 
 const styles = StyleSheet.create({
@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
     textOverflow: 'ellipsis',
   },
   actions: {
-    marginLeft: 'auto',
+    flex: 1,
+    justifyContent: 'space-between',
   },
   button: {
     flexDirection: 'row-reverse',
@@ -25,12 +26,32 @@ const styles = StyleSheet.create({
   },
 });
 
+// TODO: Decide how post can be liked.
+// Posts on your own profile cannot be liked.
+// Only friends posts on other profiles can be liked.
+
 export default function Post({
-  post, onLike, onPress, isFocused,
+  post, onLike, onPress, onEdit, onDelete, isFocused,
 }) {
+  const theme = useTheme();
+
+  const [isMenuVisible, setIsMenuVisible] = useState(false);
+
+  const openMenu = () => setIsMenuVisible(true);
+  const closeMenu = () => setIsMenuVisible(false);
+
   function formatDate(unix) {
     return new Date(unix).toLocaleString('en-GB');
   }
+
+  /**
+   * Wrapper for a callback on `Menu.Item` press. Closes the `Menu` before running callback.
+   * @param {Function} callback Callback to run on menu item press.
+   */
+  const handleMenuPress = (callback) => {
+    closeMenu();
+    callback();
+  };
 
   return (
     <Card mode="outlined" onPress={() => onPress({ post })}>
@@ -47,7 +68,14 @@ export default function Post({
         <Paragraph style={!isFocused && styles.overflow}>{post.text}</Paragraph>
       </Card.Content>
       <Card.Actions style={styles.actions}>
-
+        <Menu
+          visible={isMenuVisible}
+          onDismiss={closeMenu}
+          anchor={<IconButton icon="ellipsis-horizontal" style={{ marginRight: 'auto' }} color={theme.colors.primary} onPress={openMenu} />}
+        >
+          <Menu.Item onPress={() => handleMenuPress(onEdit)} icon="create" title="Edit Post" />
+          <Menu.Item onPress={() => handleMenuPress(onDelete)} icon="trash" title="Delete Post" />
+        </Menu>
         <Button icon="heart" contentStyle={styles.button} onPress={() => onLike({ post })}>
           <Badge style={styles.badge}>{post.numLikes}</Badge>
           Like
@@ -71,11 +99,15 @@ Post.propTypes = {
     numLikes: PropTypes.number.isRequired,
   }).isRequired,
   onLike: PropTypes.func.isRequired,
+  onEdit: PropTypes.func,
+  onDelete: PropTypes.func,
   onPress: PropTypes.func,
   isFocused: PropTypes.bool,
 };
 
 Post.defaultProps = {
   onPress: () => null,
+  onEdit: () => null,
+  onDelete: () => null,
   isFocused: false,
 };
