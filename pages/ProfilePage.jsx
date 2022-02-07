@@ -44,6 +44,7 @@ export default function ProfilePage({ route }) {
 
   const theme = useTheme();
 
+  const [signedInUserId, setSignedInUserId] = useState(-1);
   const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [posts, setPosts] = useState([]);
@@ -96,6 +97,8 @@ export default function ProfilePage({ route }) {
     await loadUser({ sessionToken });
     await loadProfilePhoto({ sessionToken });
     await loadPosts({ sessionToken });
+
+    setSignedInUserId(Number(await AsyncStorage.getItem('user_id')));
   }, []);
 
   /**
@@ -187,7 +190,7 @@ export default function ProfilePage({ route }) {
    * @param {Object} post Post that was liked.
    * @param {string} post.postId ID of post that was liked.
    */
-  const onLike = async ({ post: { postId } }) => {
+  const onLikePost = async ({ post: { postId } }) => {
     const sessionToken = await AsyncStorage.getItem('session_token');
     const likeResponse = await likePost({ userId, postId, sessionToken });
 
@@ -205,12 +208,47 @@ export default function ProfilePage({ route }) {
     return loadPosts({ sessionToken });
   };
 
+  const onEditPost = ({ post }) => {
+    console.log({ post }, 'to edit.');
+  };
+
+  const onDeletePost = ({ post }) => {
+    console.log({ post }, ' to delete.');
+  };
+
   /**
-   * Renders posts in a list.
+   * Conditionally render a `Post` component.
    */
-  const renderPosts = ({ item: post }) => (
-    <Post post={post} onLike={onLike} onPress={onShowPostModal} />
-  );
+  const renderPost = ({ item: post }, options) => {
+    const isLikeable = userId !== signedInUserId || post.author.userId !== signedInUserId;
+    const isOwn = post.author.userId === signedInUserId;
+    const isFocused = Boolean(options?.isFocused);
+
+    if (isLikeable) {
+      return (
+        <Post
+          post={post}
+          onLike={onLikePost}
+          onPress={onShowPostModal}
+          isFocused={isFocused}
+        />
+      );
+    }
+
+    if (isOwn) {
+      return (
+        <Post
+          post={post}
+          onEdit={onEditPost}
+          onDelete={onDeletePost}
+          onPress={onShowPostModal}
+          isFocused={isFocused}
+        />
+      );
+    }
+
+    return <Post post={post} onPress={onShowPostModal} isFocused={isFocused} />;
+  };
 
   return (
     <View style={[PageStyles(theme).page, styles.spacing]}>
@@ -226,7 +264,7 @@ export default function ProfilePage({ route }) {
         contentContainerStyle={styles.postListContent}
         data={posts}
         ListHeaderComponent={<PostCompose onPost={onPost} />}
-        renderItem={renderPosts}
+        renderItem={renderPost}
         keyExtractor={(item) => item.postId}
       />
       <Portal>
@@ -235,7 +273,8 @@ export default function ProfilePage({ route }) {
           onDismiss={onDismissModal}
           contentContainerStyle={styles.modalContent}
         >
-          {focusedPost && <Post post={focusedPost} onLike={onLike} isFocused />}
+          {focusedPost
+            && renderPost({ item: focusedPost }, { isFocused: true })}
         </Modal>
       </Portal>
       <Snackbar

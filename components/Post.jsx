@@ -1,8 +1,15 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import {
-  Card, Caption, Paragraph, Button, Badge, Menu, IconButton, useTheme,
+  Card,
+  Caption,
+  Paragraph,
+  Button,
+  Badge,
+  Menu,
+  IconButton,
+  useTheme,
 } from 'react-native-paper';
 
 const styles = StyleSheet.create({
@@ -26,12 +33,13 @@ const styles = StyleSheet.create({
   },
 });
 
-// TODO: Decide how post can be liked.
-// Posts on your own profile cannot be liked.
-// Only friends posts on other profiles can be liked.
-
 export default function Post({
-  post, onLike, onPress, onEdit, onDelete, isFocused,
+  post,
+  onLike,
+  onPress,
+  onEdit,
+  onDelete,
+  isFocused,
 }) {
   const theme = useTheme();
 
@@ -50,7 +58,7 @@ export default function Post({
    */
   const handleMenuPress = (callback) => {
     closeMenu();
-    callback();
+    callback({ post });
   };
 
   return (
@@ -68,18 +76,47 @@ export default function Post({
         <Paragraph style={!isFocused && styles.overflow}>{post.text}</Paragraph>
       </Card.Content>
       <Card.Actions style={styles.actions}>
-        <Menu
-          visible={isMenuVisible}
-          onDismiss={closeMenu}
-          anchor={<IconButton icon="ellipsis-horizontal" style={{ marginRight: 'auto' }} color={theme.colors.primary} onPress={openMenu} />}
-        >
-          <Menu.Item onPress={() => handleMenuPress(onEdit)} icon="create" title="Edit Post" />
-          <Menu.Item onPress={() => handleMenuPress(onDelete)} icon="trash" title="Delete Post" />
-        </Menu>
-        <Button icon="heart" contentStyle={styles.button} onPress={() => onLike({ post })}>
-          <Badge style={styles.badge}>{post.numLikes}</Badge>
-          Like
-        </Button>
+        {onEdit || onDelete ? (
+          <Menu
+            visible={isMenuVisible}
+            onDismiss={closeMenu}
+            anchor={(
+              <IconButton
+                icon="ellipsis-horizontal"
+                style={{ marginRight: 'auto' }}
+                color={theme.colors.primary}
+                onPress={openMenu}
+              />
+            )}
+          >
+            {onEdit && (
+              <Menu.Item
+                onPress={() => handleMenuPress(onEdit)}
+                icon="create"
+                title="Edit Post"
+              />
+            )}
+            {onDelete && (
+              <Menu.Item
+                onPress={() => handleMenuPress(onDelete)}
+                icon="trash"
+                title="Delete Post"
+              />
+            )}
+          </Menu>
+        ) : (
+          <View />
+        )}
+        {onLike && (
+          <Button
+            icon="heart"
+            contentStyle={styles.button}
+            onPress={() => onLike({ post })}
+          >
+            <Badge style={styles.badge}>{post.numLikes}</Badge>
+            Like
+          </Button>
+        )}
       </Card.Actions>
     </Card>
   );
@@ -98,7 +135,7 @@ Post.propTypes = {
     }).isRequired,
     numLikes: PropTypes.number.isRequired,
   }).isRequired,
-  onLike: PropTypes.func.isRequired,
+  onLike: PropTypes.func,
   onEdit: PropTypes.func,
   onDelete: PropTypes.func,
   onPress: PropTypes.func,
@@ -106,8 +143,9 @@ Post.propTypes = {
 };
 
 Post.defaultProps = {
+  onLike: null,
   onPress: () => null,
-  onEdit: () => null,
-  onDelete: () => null,
+  onEdit: null,
+  onDelete: null,
   isFocused: false,
 };
