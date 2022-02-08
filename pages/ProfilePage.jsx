@@ -15,6 +15,7 @@ import {
   likePost,
   unlikePost,
   updatePost,
+  deletePost,
 } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -24,6 +25,7 @@ import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
 import PostEdit from '../components/PostEdit';
+import PostDeleteDialog from '../components/PostDeleteDialog';
 
 const styles = StyleSheet.create({
   spacing: {
@@ -52,6 +54,8 @@ export default function ProfilePage({ route }) {
   const [posts, setPosts] = useState([]);
   const [focusedPost, setFocusedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
+  const [deletingPost, setDeletingPost] = useState(null);
+  const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -103,6 +107,15 @@ export default function ProfilePage({ route }) {
 
     setSignedInUserId(Number(await AsyncStorage.getItem('user_id')));
   }, []);
+
+  /**
+   * Synchronises state when `PostDeleteDialog` is dismissed.
+   */
+  const onDismissDialog = () => {
+    setIsDialogVisible(false);
+
+    if (deletingPost) setDeletingPost(null);
+  };
 
   /**
    * Synchronises state when `Modal` is dismissed.
@@ -158,6 +171,20 @@ export default function ProfilePage({ route }) {
 
     setEditingPost(post);
     setIsModalVisible(true);
+  };
+
+  /**
+   * Shows the `PostDeleteDialog` to confirm deletion.
+   * @param {Object} data Callback data.
+   * @param {Object} data.post The post to target for deletion.
+   */
+  const onShowDeleteDialog = ({ post }) => {
+    // Cleanup any existing `Modals` before loading this one.
+    // As this `Modal` can be triggered from another.
+    onDismissModal();
+
+    setIsDialogVisible(true);
+    setDeletingPost(post);
   };
 
   /**
@@ -226,10 +253,6 @@ export default function ProfilePage({ route }) {
     return loadPosts({ sessionToken });
   };
 
-  const onDeletePost = ({ post }) => {
-    console.log({ post }, ' to delete.');
-  };
-
   /**
    * Handles saving the changes made from an edit post interaction.
    * @param {Object} data Data from callback.
@@ -257,6 +280,24 @@ export default function ProfilePage({ route }) {
   };
 
   /**
+   * Handles deleting a post.
+   * @param {Object} data Data from callback.
+   * @param {string} data.postId ID of post to delete.
+   */
+  const onDeletePost = async ({ postId }) => {
+    onDismissDialog();
+
+    const sessionToken = await AsyncStorage.getItem('session_token');
+    const response = await deletePost({ userId, postId, sessionToken });
+
+    if (response.ok) {
+      return loadPosts({ sessionToken });
+    }
+
+    return showSnackbar(response.message);
+  };
+
+  /**
    * Conditionally render a `Post` component.
    */
   const renderPost = ({ item: post }, options) => {
@@ -272,7 +313,7 @@ export default function ProfilePage({ route }) {
         <Post
           post={post}
           onEdit={onShowEditPostModal}
-          onDelete={onDeletePost}
+          onDelete={onShowDeleteDialog}
           onPress={onShowPostModal}
           isFocused={isFocused}
         />
@@ -324,6 +365,16 @@ export default function ProfilePage({ route }) {
             && renderPost({ item: focusedPost }, { isFocused: true })}
           {editingPost && <PostEdit post={editingPost} onSave={onEditPost} />}
         </Modal>
+      </Portal>
+      <Portal>
+        {deletingPost && (
+          <PostDeleteDialog
+            post={deletingPost}
+            visible={isDialogVisible}
+            onDismiss={onDismissDialog}
+            onDelete={onDeletePost}
+          />
+        )}
       </Portal>
       <Snackbar
         visible={isSnackbarVisible}

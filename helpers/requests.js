@@ -315,9 +315,9 @@ export async function createPost({ userId, sessionToken, text }) {
 /**
  * Get a post on a given user's profile.
  * @param {Object} request Request data.
- * @param {string} userId ID of the user to create a post on their page.
- * @param {string} postId ID of the post to get.
- * @param {string} sessionToken Authorisation token from logged in user.
+ * @param {string} request.userId ID of the user to create a post on their page.
+ * @param {string} request.postId ID of the post to get.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
 export async function getPost({ userId, postId, sessionToken }) {
@@ -358,6 +358,7 @@ export async function getPost({ userId, postId, sessionToken }) {
  * @param {Object} request Request data.
  * @param {string} request.userId ID of the user who's profile the post to be updated is located.
  * @param {string} request.postId ID of the post to update.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
 export async function updatePost({
@@ -402,10 +403,53 @@ export async function updatePost({
 }
 
 /**
+ * Delete a post on a given user's profile.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of the user who's profle the post to be deleted is located.
+ * @param {string} request.postId ID of the post to delete.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @returns A parsed response object.
+ */
+export async function deletePost({ userId, postId, sessionToken }) {
+  const response = await fetch(url(`user/${userId}/post/${postId}`), {
+    method: 'DELETE',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'delete post.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'you can only delete your own posts.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no post found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Likes a post on a user's profile.
  * @param {Object} request Request data.
  * @param {string} request.userId ID of the user's profile.
  * @param {string} request.postId ID of post to like.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
 export async function likePost({ userId, postId, sessionToken }) {
@@ -450,6 +494,7 @@ export async function likePost({ userId, postId, sessionToken }) {
  * @param {Object} request Request data.
  * @param {string} request.userId ID of the user's profile.
  * @param {string} request.postId ID of post to unlike.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
 export async function unlikePost({ userId, postId, sessionToken }) {
