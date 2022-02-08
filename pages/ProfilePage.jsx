@@ -220,21 +220,13 @@ export default function ProfilePage({ route }) {
    * Conditionally render a `Post` component.
    */
   const renderPost = ({ item: post }, options) => {
-    const isLikeable = userId !== signedInUserId || post.author.userId !== signedInUserId;
+    const isLikeable = (userId !== signedInUserId) && (post.author.userId !== signedInUserId);
     const isOwn = post.author.userId === signedInUserId;
     const isFocused = Boolean(options?.isFocused);
 
-    if (isLikeable) {
-      return (
-        <Post
-          post={post}
-          onLike={onLikePost}
-          onPress={onShowPostModal}
-          isFocused={isFocused}
-        />
-      );
-    }
-
+    // According to API spec.
+    // If Post is authored by the currently signed in user it cannot be liked,
+    // but can be edited / deleted.
     if (isOwn) {
       return (
         <Post
@@ -247,6 +239,21 @@ export default function ProfilePage({ route }) {
       );
     }
 
+    // According to API spec.
+    // If Post is by a different user and not on the currently signed in user's profile,
+    // it can be liked.
+    if (isLikeable) {
+      return (
+        <Post
+          post={post}
+          onLike={onLikePost}
+          onPress={onShowPostModal}
+          isFocused={isFocused}
+        />
+      );
+    }
+
+    // Fallback post to render "something", if above conditions fail to meet requirements.
     return <Post post={post} onPress={onShowPostModal} isFocused={isFocused} />;
   };
 
