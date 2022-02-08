@@ -13,13 +13,6 @@ import {
 } from 'react-native-paper';
 
 const styles = StyleSheet.create({
-  overflow: {
-    display: '-webkit-box',
-    '-webkit-line-clamp': '3',
-    '-webkit-box-orient': 'vertical',
-    overflow: 'hidden',
-    textOverflow: 'ellipsis',
-  },
   actions: {
     flex: 1,
     justifyContent: 'space-between',
@@ -78,7 +71,13 @@ export default function Post({
           {' '}
           {formatDate(post.timestamp)}
         </Caption>
-        <Paragraph style={!isFocused && styles.overflow}>{post.text}</Paragraph>
+        {isFocused ? (
+          <Paragraph>{post.text}</Paragraph>
+        ) : (
+          <Paragraph numberOfLines={3} ellipsizeMode="tail">
+            {post.text}
+          </Paragraph>
+        )}
       </Card.Content>
       <Card.Actions style={styles.actions}>
         {onEdit || onDelete ? (
@@ -114,13 +113,13 @@ export default function Post({
         )}
         <View style={styles.actionsWrapper}>
           {onLike && (
-          <Button
-            icon="heart"
-            contentStyle={styles.button}
-            onPress={() => onLike({ post })}
-          >
-            Like
-          </Button>
+            <Button
+              icon="heart"
+              contentStyle={styles.button}
+              onPress={() => onLike({ post })}
+            >
+              Like
+            </Button>
           )}
           <Badge style={styles.badge}>{post.numLikes}</Badge>
         </View>
