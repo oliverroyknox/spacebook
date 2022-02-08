@@ -50,7 +50,9 @@ function renderTabBarIcon(route, options) {
 
 const renderIonicon = ({
   name, color, size, direction,
-}) => <Ionicons name={name} color={color} size={size} direction={direction} />;
+}) => (
+  <Ionicons name={name} color={color} size={size} direction={direction} />
+);
 
 /**
  * Sets the screen options for the tab navigator component.
@@ -61,7 +63,7 @@ const renderIonicon = ({
 const setTabNavigatorScreenOptions = ({ route }) => ({
   tabBarIcon: (options) => renderTabBarIcon(route, options),
   tabBarLabelPosition: 'below-icon',
-  tabBarStyle: { marginBottom: '4px' },
+  tabBarStyle: { marginBottom: 4 },
   headerShown: false,
 });
 
@@ -89,7 +91,7 @@ export default function App() {
    * Loads saved user login credentials to skip sign in process.
    */
   const loadSavedCredentials = async () => {
-    const userId = await AsyncStorage.getItem('user_id');
+    const userId = Number(await AsyncStorage.getItem('user_id'));
     const sessionToken = await AsyncStorage.getItem('session_token');
 
     if (userId && sessionToken) {
@@ -111,7 +113,7 @@ export default function App() {
    */
   const onAuthenticate = async ({ userId, sessionToken }) => {
     try {
-      await AsyncStorage.setItem('user_id', userId);
+      await AsyncStorage.setItem('user_id', String(userId));
       await AsyncStorage.setItem('session_token', sessionToken);
       setCurrentUserId(userId);
       setIsAuthenticated(true);
@@ -127,16 +129,54 @@ export default function App() {
   const onUnauthenticate = async () => {
     await AsyncStorage.removeItem('user_id');
     await AsyncStorage.removeItem('session_token');
-    setCurrentUserId(-1);
     setIsAuthenticated(false);
+    setCurrentUserId(-1);
   };
+
+  /**
+   * Render `ProfilePage` with custom props.
+   * @param {Object} data Navigator props.
+   * @param {Object} data.route Navigator route.
+   * @returns `ProfilePage` component.
+   */
+  const renderProfilePage = ({ route }) => (
+    <ProfilePage route={route} onUnauthenticate={onUnauthenticate} />
+  );
+
+  /**
+   * Render `LoginPage` with custom props.
+   * @param {Object} data Navigator props.
+   * @param {Object} data.navigation Navigator navigation.
+   * @returns `LoginPage` component.
+   */
+  const renderLoginPage = ({ navigation }) => (
+    <LoginPage
+      navigation={navigation}
+      onAuthenticate={onAuthenticate}
+    />
+  );
+
+  /**
+   * Render `SignupPage` with custom props.
+   * @param {Object} data Navigator props.
+   * @param {Object} data.navigation Navigator navigation.
+   * @returns `SignupPage` component.
+   */
+  const renderSignupPage = ({ navigation }) => (
+    <SignupPage navigation={navigation} onAuthenticate={onAuthenticate} />
+  );
 
   return (
     <PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
-            <Stack.Screen name="Profile" component={ProfilePage} initialParams={{ userId: currentUserId, onUnauthenticate }} />
+            <Stack.Screen
+              name="Profile"
+              initialParams={{ userId: currentUserId }}
+            >
+              {renderProfilePage}
+            </Stack.Screen>
             <Stack.Screen name="Search" component={SearchPage} />
             <Stack.Screen name="Friends" component={FriendsPage} />
           </Tab.Navigator>
@@ -144,26 +184,26 @@ export default function App() {
           <Stack.Navigator>
             <Stack.Screen
               name="Login"
-              component={LoginPage}
-              initialParams={{ onAuthenticate }}
               options={{
                 headerTitle: LogoHeader,
                 headerLeft: () => null,
                 headerStyle: { backgroundColor: Theme.colors.header },
                 headerTintColor: Theme.colors.headerText,
               }}
-            />
+            >
+              {renderLoginPage}
+            </Stack.Screen>
             <Stack.Screen
               name="Signup"
-              component={SignupPage}
-              initialParams={{ onAuthenticate }}
               options={{
                 headerTitle: LogoHeader,
                 headerLeft: () => null,
                 headerStyle: { backgroundColor: Theme.colors.header },
                 headerTintColor: Theme.colors.headerText,
               }}
-            />
+            >
+              {renderSignupPage}
+            </Stack.Screen>
           </Stack.Navigator>
         )}
       </NavigationContainer>

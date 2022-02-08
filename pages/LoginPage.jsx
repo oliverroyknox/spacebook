@@ -7,9 +7,7 @@ import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import LoginForm from '../components/LoginForm';
 
-export default function LoginPage({ navigation, route }) {
-  const { onAuthenticate } = route.params;
-
+export default function LoginPage({ navigation, onAuthenticate }) {
   const theme = useTheme();
 
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -73,9 +71,5 @@ LoginPage.propTypes = {
   navigation: PropTypes.shape({
     navigate: PropTypes.func.isRequired,
   }).isRequired,
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      onAuthenticate: PropTypes.func.isRequired,
-    }).isRequired,
-  }).isRequired,
+  onAuthenticate: PropTypes.func.isRequired,
 };

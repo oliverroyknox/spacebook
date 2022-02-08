@@ -45,8 +45,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ProfilePage({ route }) {
-  const { userId, onUnauthenticate } = route.params;
+export default function ProfilePage({ route, onUnauthenticate }) {
+  const { userId } = route.params;
 
   const theme = useTheme();
 
@@ -108,6 +108,13 @@ export default function ProfilePage({ route }) {
     await loadPosts({ sessionToken });
 
     setSignedInUserId(Number(await AsyncStorage.getItem('user_id')));
+
+    return () => {
+      setUser(null);
+      setProfilePhoto('');
+      setPosts([]);
+      setSignedInUserId(-1);
+    };
   }, []);
 
   /**
@@ -408,7 +415,7 @@ ProfilePage.propTypes = {
   route: PropTypes.shape({
     params: PropTypes.shape({
       userId: PropTypes.number.isRequired,
-      onUnauthenticate: PropTypes.func.isRequired,
     }).isRequired,
   }).isRequired,
+  onUnauthenticate: PropTypes.func.isRequired,
 };

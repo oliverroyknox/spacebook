@@ -20,10 +20,8 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function SignupPage({ navigation, route }) {
+export default function SignupPage({ navigation, onAuthenticate }) {
   const tempData = { email: '', password: '' };
-
-  const { onAuthenticate } = route.params;
 
   const theme = useTheme();
 
@@ -137,9 +135,5 @@ SignupPage.propTypes = {
     navigate: PropTypes.func.isRequired,
     goBack: PropTypes.func.isRequired,
   }).isRequired,
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      onAuthenticate: PropTypes.func.isRequired,
-    }).isRequired,
-  }).isRequired,
+  onAuthenticate: PropTypes.func.isRequired,
 };
