@@ -5,7 +5,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-around',
-    gap: 16,
     paddingVertical: 24,
     paddingHorizontal: 32,
     width: '100%',
@@ -13,7 +12,10 @@ const styles = StyleSheet.create({
   },
   content: {
     width: '100%',
-    gap: 8,
+    marginVertical: 16,
+  },
+  item: {
+    marginVertical: 8,
   },
   title: {
     fontSize: 32,

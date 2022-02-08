@@ -33,10 +33,12 @@ const styles = StyleSheet.create({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    gap: 8,
+  },
+  icon: {
+    marginRight: 8,
   },
   signup: {
-    marginBottom: 32,
+    marginBottom: 24,
   },
 });
 
@@ -52,17 +54,17 @@ export default function SignupDetailsForm({ onSignup, onGoBack }) {
   return (
     <View style={FormStyles.container}>
       <View style={styles.titleContainer}>
-        { onGoBack && <Ionicons name="arrow-back" size={32} color="black" onPress={onGoBack} /> }
+        { onGoBack && <Ionicons style={styles.icon} name="arrow-back" size={32} color="black" onPress={onGoBack} /> }
         <Title style={FormStyles.title}>Details</Title>
       </View>
       <View style={FormStyles.content}>
-        <View>
+        <View style={FormStyles.item}>
           <TextInput control={control} name="firstName" label="First Name" />
           <Caption style={ErrorStyles(theme).caption}>
             {errors.firstName && capitalise(errors.firstName.message)}
           </Caption>
         </View>
-        <View>
+        <View style={FormStyles.item}>
           <TextInput control={control} name="lastName" label="Last Name" />
           <Caption style={ErrorStyles(theme).caption}>
             {errors.lastName && capitalise(errors.lastName.message)}

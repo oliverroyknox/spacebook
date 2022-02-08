@@ -42,13 +42,13 @@ export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
     <View style={FormStyles.container}>
       <Title style={FormStyles.title}>Sign Up</Title>
       <View style={FormStyles.content}>
-        <View>
+        <View style={FormStyles.item}>
           <TextInput control={control} name="email" label="Email" />
           <Caption style={ErrorStyles(theme).caption}>
             {errors.email && capitalise(errors.email.message)}
           </Caption>
         </View>
-        <View>
+        <View style={FormStyles.item}>
           <TextInput
             control={control}
             name="password"

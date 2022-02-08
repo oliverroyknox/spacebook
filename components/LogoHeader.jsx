@@ -8,7 +8,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
   },
 });
 
@@ -17,8 +16,8 @@ export default function LogoHeader() {
 
   return (
     <View style={styles.container}>
-      <Image style={{ width: 50, height: 50 }} source={Logo} />
-      <Title style={{ color: colors.headerText }}>Spacebook</Title>
+      <Image style={{ width: 50, height: 50, marginHorizontal: 6 }} source={Logo} />
+      <Title style={{ color: colors.headerText, marginHorizontal: 6 }}>Spacebook</Title>
     </View>
   );
 }

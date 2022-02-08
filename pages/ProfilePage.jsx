@@ -29,14 +29,16 @@ import PostDeleteDialog from '../components/PostDeleteDialog';
 
 const styles = StyleSheet.create({
   spacing: {
-    gap: 16,
+    marginVertical: 8,
   },
   postList: {
     paddingHorizontal: 16,
   },
-  postListContent: {
-    gap: 16,
-    paddingBottom: 16,
+  postContent: {
+    marginBottom: 8,
+  },
+  post: {
+    marginVertical: 8,
   },
   modalContent: {
     marginHorizontal: 32,
@@ -305,53 +307,68 @@ export default function ProfilePage({ route }) {
     const isOwn = post.author.userId === signedInUserId;
     const isFocused = Boolean(options?.isFocused);
 
+    const style = !isFocused && styles.post;
+
+    function renderCard() {
     // According to API spec.
     // If Post is authored by the currently signed in user it cannot be liked,
     // but can be edited / deleted.
-    if (isOwn) {
+      if (isOwn) {
+        return (
+          <Post
+            post={post}
+            onEdit={onShowEditPostModal}
+            onDelete={onShowDeleteDialog}
+            onPress={onShowPostModal}
+            isFocused={isFocused}
+          />
+        );
+      }
+
+      // According to API spec.
+      // If Post is by a different user and not on the currently signed in user's profile,
+      // it can be liked.
+      if (isLikeable) {
+        return (
+          <Post
+            post={post}
+            onLike={onLikePost}
+            onPress={onShowPostModal}
+            isFocused={isFocused}
+          />
+        );
+      }
+
+      // Fallback post to render "something", if above conditions fail to meet requirements.
       return (
-        <Post
-          post={post}
-          onEdit={onShowEditPostModal}
-          onDelete={onShowDeleteDialog}
-          onPress={onShowPostModal}
-          isFocused={isFocused}
-        />
+        <Post post={post} onPress={onShowPostModal} isFocused={isFocused} />
       );
     }
 
-    // According to API spec.
-    // If Post is by a different user and not on the currently signed in user's profile,
-    // it can be liked.
-    if (isLikeable) {
-      return (
-        <Post
-          post={post}
-          onLike={onLikePost}
-          onPress={onShowPostModal}
-          isFocused={isFocused}
-        />
-      );
-    }
-
-    // Fallback post to render "something", if above conditions fail to meet requirements.
-    return <Post post={post} onPress={onShowPostModal} isFocused={isFocused} />;
+    return (
+      <View style={style}>
+        {renderCard()}
+      </View>
+    );
   };
 
   return (
-    <View style={[PageStyles(theme).page, styles.spacing]}>
+    <View style={[PageStyles(theme).page]}>
       <ProfileHero
         profilePhoto={profilePhoto}
         user={user}
         onEdit={onEditProfile}
         onLogout={onLogout}
       />
-      <Divider text="Posts" />
+      <View style={styles.spacing}>
+        <Divider text="Posts" />
+      </View>
       <FlatList
-        style={styles.postList}
-        contentContainerStyle={styles.postListContent}
+        style={[styles.postList]}
+        contentContainerStyle={styles.postContent}
         data={posts}
         ListHeaderComponent={<PostCompose onPost={onPost} />}
+        ListHeaderComponentStyle={styles.postContent}
         renderItem={renderPost}
         keyExtractor={(item) => item.postId}
       />

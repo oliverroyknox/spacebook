@@ -10,11 +10,11 @@ const styles = ({ colors }) => StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
   },
   line: {
     width: '100%',
     height: 1,
+    marginHorizontal: 8,
     backgroundColor: colors.divider,
   },
 });
