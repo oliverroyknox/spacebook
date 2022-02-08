@@ -151,6 +151,10 @@ export default function ProfilePage({ route }) {
    * @param {Object} data.post A post to be edited.
    */
   const onShowEditPostModal = ({ post }) => {
+    // Cleanup any existing `Modals` before loading this one.
+    // As this `Modal` can be triggered from another.
+    onDismissModal();
+
     setEditingPost(post);
     setIsModalVisible(true);
   };
