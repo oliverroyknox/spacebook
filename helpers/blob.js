@@ -1,13 +1,8 @@
 /**
- * Converts blob data into a data URL.
+ * Create a data URL from `Blob`.
  * @param {Blob} blob `Blob` data object.
- * @returns Data URL encoded as `Base64.`
+ * @returns A URL representing the `Blob` data.
  */
 export default async function toDataUrl(blob) {
-  const header = 'data:image/png;base64,';
-
-  const buffer = Buffer.from(await blob.arrayBuffer());
-  const data = buffer.toString('base64');
-
-  return header + data;
+  return URL.createObjectURL(blob);
 }
