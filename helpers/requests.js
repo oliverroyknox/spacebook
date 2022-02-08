@@ -354,6 +354,54 @@ export async function getPost({ userId, postId, sessionToken }) {
 }
 
 /**
+ * Update a post on a given user's profile.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of the user who's profile the post to be updated is located.
+ * @param {string} request.postId ID of the post to update.
+ * @returns A parsed response object.
+ */
+export async function updatePost({
+  userId, postId, sessionToken, post,
+}) {
+  const response = await fetch(url(`user/${userId}/post/${postId}`), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': sessionToken,
+    },
+    body: JSON.stringify(post),
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'updated post.' };
+      break;
+    case 400:
+      returnValue = { ok: false, message: 'invalid data to update post.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'you can only update your own posts.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no post found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Likes a post on a user's profile.
  * @param {Object} request Request data.
  * @param {string} request.userId ID of the user's profile.

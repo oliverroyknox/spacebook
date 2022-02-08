@@ -14,6 +14,7 @@ import {
   getPost,
   likePost,
   unlikePost,
+  updatePost,
 } from '../helpers/requests';
 import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -234,16 +235,32 @@ export default function ProfilePage({ route }) {
    * @param {Object} data Data from callback.
    * @param {string} data.text New text of post to update.
    */
-  const onEditPost = ({ text }) => {
-    console.log({ text }, ' has been changed.');
-    setIsModalVisible(false);
+  const onEditPost = async ({ postId, text }) => {
+    // Cleanup any existing `Modals` before loading this one.
+    // As this `Modal` can be triggered from another.
+    onDismissModal();
+
+    const data = { text };
+    const sessionToken = await AsyncStorage.getItem('session_token');
+    const response = await updatePost({
+      userId,
+      postId,
+      sessionToken,
+      post: data,
+    });
+
+    if (response.ok) {
+      return loadPosts({ sessionToken });
+    }
+
+    return showSnackbar(response.message);
   };
 
   /**
    * Conditionally render a `Post` component.
    */
   const renderPost = ({ item: post }, options) => {
-    const isLikeable = (userId !== signedInUserId) && (post.author.userId !== signedInUserId);
+    const isLikeable = userId !== signedInUserId && post.author.userId !== signedInUserId;
     const isOwn = post.author.userId === signedInUserId;
     const isFocused = Boolean(options?.isFocused);
 

@@ -33,7 +33,7 @@ export default function PostEdit({ post, onSave }) {
 
   const onSaveWithReset = (data) => {
     reset();
-    onSave(data);
+    onSave({ ...post, ...data });
   };
 
   return (
