@@ -22,6 +22,7 @@ import ProfileHero from '../components/ProfileHero';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
+import PostEdit from '../components/PostEdit';
 
 const styles = StyleSheet.create({
   spacing: {
@@ -49,6 +50,7 @@ export default function ProfilePage({ route }) {
   const [profilePhoto, setProfilePhoto] = useState('');
   const [posts, setPosts] = useState([]);
   const [focusedPost, setFocusedPost] = useState(null);
+  const [editingPost, setEditingPost] = useState(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -108,6 +110,7 @@ export default function ProfilePage({ route }) {
     setIsModalVisible(false);
 
     if (focusedPost) setFocusedPost(null);
+    if (editingPost) setEditingPost(null);
   };
 
   /**
@@ -140,6 +143,16 @@ export default function ProfilePage({ route }) {
     }
 
     return showSnackbar(response.message);
+  };
+
+  /**
+   * Shows a `Modal` with a post ready to be edited.
+   * @param {Object} data Callback data.
+   * @param {Object} data.post A post to be edited.
+   */
+  const onShowEditPostModal = ({ post }) => {
+    setEditingPost(post);
+    setIsModalVisible(true);
   };
 
   /**
@@ -208,12 +221,18 @@ export default function ProfilePage({ route }) {
     return loadPosts({ sessionToken });
   };
 
-  const onEditPost = ({ post }) => {
-    console.log({ post }, 'to edit.');
-  };
-
   const onDeletePost = ({ post }) => {
     console.log({ post }, ' to delete.');
+  };
+
+  /**
+   * Handles saving the changes made from an edit post interaction.
+   * @param {Object} data Data from callback.
+   * @param {string} data.text New text of post to update.
+   */
+  const onEditPost = ({ text }) => {
+    console.log({ text }, ' has been changed.');
+    setIsModalVisible(false);
   };
 
   /**
@@ -231,7 +250,7 @@ export default function ProfilePage({ route }) {
       return (
         <Post
           post={post}
-          onEdit={onEditPost}
+          onEdit={onShowEditPostModal}
           onDelete={onDeletePost}
           onPress={onShowPostModal}
           isFocused={isFocused}
@@ -282,6 +301,7 @@ export default function ProfilePage({ route }) {
         >
           {focusedPost
             && renderPost({ item: focusedPost }, { isFocused: true })}
+          {editingPost && <PostEdit post={editingPost} onSave={onEditPost} />}
         </Modal>
       </Portal>
       <Snackbar
