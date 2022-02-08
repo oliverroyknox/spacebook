@@ -24,12 +24,17 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'space-between',
   },
+  actionsWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   button: {
     flexDirection: 'row-reverse',
     minHeight: 16,
   },
   badge: {
     marginRight: 8,
+    alignSelf: 'auto',
   },
 });
 
@@ -107,16 +112,18 @@ export default function Post({
         ) : (
           <View />
         )}
-        {onLike && (
+        <View style={styles.actionsWrapper}>
+          {onLike && (
           <Button
             icon="heart"
             contentStyle={styles.button}
             onPress={() => onLike({ post })}
           >
-            <Badge style={styles.badge}>{post.numLikes}</Badge>
             Like
           </Button>
-        )}
+          )}
+          <Badge style={styles.badge}>{post.numLikes}</Badge>
+        </View>
       </Card.Actions>
     </Card>
   );
