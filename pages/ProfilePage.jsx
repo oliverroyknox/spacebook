@@ -4,6 +4,7 @@ import { View, FlatList, StyleSheet } from 'react-native';
 import {
   Portal, Modal, Snackbar, useTheme,
 } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   createPost,
@@ -52,6 +53,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const { userId } = route.params;
 
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [signedInUserId, setSignedInUserId] = useState(-1);
   const [user, setUser] = useState(null);
@@ -409,7 +411,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   };
 
   return (
-    <View style={[PageStyles(theme).page]}>
+    <View style={[PageStyles(theme, insets).page]}>
       <ProfileHero
         profilePhoto={profilePhoto}
         user={user}

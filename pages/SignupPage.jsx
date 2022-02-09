@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import capitalise from '../helpers/strings';
 import { login, signup } from '../helpers/requests';
@@ -24,6 +25,7 @@ export default function SignupPage({ navigation, onAuthenticate }) {
   const tempData = { email: '', password: '' };
 
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const swiperRef = useRef(null);
 
@@ -105,7 +107,7 @@ export default function SignupPage({ navigation, onAuthenticate }) {
   };
 
   return (
-    <View style={PageStyles(theme).page}>
+    <View style={PageStyles(theme, insets).page}>
       <View style={styles.swiperContainer}>
         <SwiperFlatList ref={swiperRef} disableGesture>
           <View style={styles.swiperSlide}>

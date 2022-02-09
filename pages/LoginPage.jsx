@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { login } from '../helpers/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
@@ -9,6 +10,7 @@ import LoginForm from '../components/LoginForm';
 
 export default function LoginPage({ navigation, onAuthenticate }) {
   const theme = useTheme();
+  const insets = useSafeAreaInsets();
 
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
@@ -54,7 +56,7 @@ export default function LoginPage({ navigation, onAuthenticate }) {
   };
 
   return (
-    <View style={PageStyles(theme).page}>
+    <View style={PageStyles(theme, insets).page}>
       <LoginForm onLogin={onLogin} onSignupRedirect={onSignupRedirect} />
       <Snackbar
         visible={isSnackbarVisible}
