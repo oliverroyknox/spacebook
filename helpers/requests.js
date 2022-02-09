@@ -181,6 +181,53 @@ export async function getUser({ userId, sessionToken }) {
 }
 
 /**
+ * Update a user's data.
+ * @param {Object} request Request data.
+ * @param {string} userId ID of user to update.
+ * @param {string} sessionToken Authorisation token from logged in user.
+ * @param {Object} user Data fields of user to update.
+ * @returns A parsed response object.
+ */
+export async function updateUser({ userId, sessionToken, user: { firstName, lastName } }) {
+  const response = await fetch(url(`user/${userId}`), {
+    method: 'PATCH',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Authorization': sessionToken,
+    },
+    body: JSON.stringify({ first_name: firstName, last_name: lastName }),
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'updated user.' };
+      break;
+    case 400:
+      returnValue = { ok: false, message: 'invalid data to update user.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 403:
+      returnValue = { ok: false, message: 'only able to update your own profile.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no user data found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Get profile photo of user.
  * @param {Object} request Request data.
  * @param {string} request.userId ID of user to get profile photo of.

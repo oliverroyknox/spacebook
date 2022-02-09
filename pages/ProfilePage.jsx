@@ -9,6 +9,7 @@ import {
   createPost,
   getProfilePhoto,
   getUser,
+  updateUser,
   getPosts,
   logout,
   getPost,
@@ -21,6 +22,7 @@ import toDataUrl from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import ProfileHero from '../components/ProfileHero';
+import ProfileEditModal from '../components/ProfileEditModal';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
@@ -41,7 +43,7 @@ const styles = StyleSheet.create({
     marginVertical: 8,
   },
   modalContent: {
-    marginHorizontal: 32,
+    marginHorizontal: 16,
   },
 });
 
@@ -58,7 +60,8 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const [editingPost, setEditingPost] = useState(null);
   const [deletingPost, setDeletingPost] = useState(null);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
-  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+  const [isPostModalVisible, setIsPostModalVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
@@ -127,10 +130,15 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   };
 
   /**
+   * Synchronises state when `ProfileEditModal` is dismissed.
+   */
+  const onDismissProfileModal = () => setIsProfileModalVisible(false);
+
+  /**
    * Synchronises state when `Modal` is dismissed.
    */
-  const onDismissModal = () => {
-    setIsModalVisible(false);
+  const onDismissPostModal = () => {
+    setIsPostModalVisible(false);
 
     if (focusedPost) setFocusedPost(null);
     if (editingPost) setEditingPost(null);
@@ -161,7 +169,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
     const response = await getPost({ userId, postId, sessionToken });
 
     if (response.ok) {
-      setIsModalVisible(true);
+      setIsPostModalVisible(true);
       return setFocusedPost(response.body);
     }
 
@@ -176,10 +184,10 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const onShowEditPostModal = ({ post }) => {
     // Cleanup any existing `Modals` before loading this one.
     // As this `Modal` can be triggered from another.
-    onDismissModal();
+    onDismissPostModal();
 
     setEditingPost(post);
-    setIsModalVisible(true);
+    setIsPostModalVisible(true);
   };
 
   /**
@@ -190,7 +198,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const onShowDeleteDialog = ({ post }) => {
     // Cleanup any existing `Modals` before loading this one.
     // As this `Modal` can be triggered from another.
-    onDismissModal();
+    onDismissPostModal();
 
     setIsDialogVisible(true);
     setDeletingPost(post);
@@ -199,7 +207,33 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   /**
    * Handles starting a session to edit a profile.
    */
-  const onEditProfile = () => console.log('editing profile...');
+  const onEditProfile = () => setIsProfileModalVisible(true);
+
+  /**
+   * Handles saving changes to a profile.
+   * @param {Object} data Callback data.
+   * @param {string} data.firstName First name of user.
+   * @param {string} data.lastName Last name of user.
+   */
+  const onSaveProfile = async ({ firstName, lastName }) => {
+    onDismissProfileModal();
+
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const data = { firstName, lastName };
+      const response = await updateUser({ userId, sessionToken, user: data });
+
+      if (response.ok) {
+        // await loadProfilePhoto({ sessionToken });
+        await loadPosts({ sessionToken });
+        return loadUser({ sessionToken });
+      }
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to reach server.');
+    }
+  };
 
   /**
    * Handles logging out the current user and returning to `login` screen.
@@ -270,7 +304,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const onEditPost = async ({ postId, text }) => {
     // Cleanup any existing `Modals` before loading this one.
     // As this `Modal` can be triggered from another.
-    onDismissModal();
+    onDismissPostModal();
 
     const data = { text };
     const sessionToken = await AsyncStorage.getItem('session_token');
@@ -317,9 +351,9 @@ export default function ProfilePage({ route, onUnauthenticate }) {
     const style = !isFocused && styles.post;
 
     function renderCard() {
-    // According to API spec.
-    // If Post is authored by the currently signed in user it cannot be liked,
-    // but can be edited / deleted.
+      // According to API spec.
+      // If Post is authored by the currently signed in user it cannot be liked,
+      // but can be edited / deleted.
       if (isOwn) {
         return (
           <Post
@@ -352,11 +386,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
       );
     }
 
-    return (
-      <View style={style}>
-        {renderCard()}
-      </View>
-    );
+    return <View style={style}>{renderCard()}</View>;
   };
 
   return (
@@ -380,9 +410,20 @@ export default function ProfilePage({ route, onUnauthenticate }) {
         keyExtractor={(item) => item.postId}
       />
       <Portal>
+        {user && (
+          <ProfileEditModal
+            profilePhoto={profilePhoto}
+            user={user}
+            visible={isProfileModalVisible}
+            onDismiss={onDismissProfileModal}
+            onSave={onSaveProfile}
+          />
+        )}
+      </Portal>
+      <Portal>
         <Modal
-          visible={isModalVisible}
-          onDismiss={onDismissModal}
+          visible={isPostModalVisible}
+          onDismiss={onDismissPostModal}
           contentContainerStyle={styles.modalContent}
         >
           {focusedPost
