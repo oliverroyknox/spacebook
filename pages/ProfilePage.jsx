@@ -17,8 +17,9 @@ import {
   unlikePost,
   updatePost,
   deletePost,
+  uploadProfilePhoto,
 } from '../helpers/requests';
-import toDataUrl from '../helpers/blob';
+import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import ProfileHero from '../components/ProfileHero';
@@ -215,21 +216,39 @@ export default function ProfilePage({ route, onUnauthenticate }) {
    * @param {string} data.firstName First name of user.
    * @param {string} data.lastName Last name of user.
    */
-  const onSaveProfile = async ({ firstName, lastName }) => {
+  const onSaveProfile = async ({
+    firstName,
+    lastName,
+    profilePhoto: photo,
+  }) => {
     onDismissProfileModal();
 
     try {
       const sessionToken = await AsyncStorage.getItem('session_token');
       const data = { firstName, lastName };
-      const response = await updateUser({ userId, sessionToken, user: data });
+      const updateUserResponse = await updateUser({ userId, sessionToken, user: data });
 
-      if (response.ok) {
-        // await loadProfilePhoto({ sessionToken });
+      if (updateUserResponse.ok) {
         await loadPosts({ sessionToken });
-        return loadUser({ sessionToken });
+        await loadUser({ sessionToken });
+
+        if (!photo) return null;
+
+        const blob = await fetchFromUri(photo);
+        const uploadPhotoResponse = await uploadProfilePhoto({
+          userId,
+          sessionToken,
+          photo: blob,
+        });
+
+        if (uploadPhotoResponse.ok) {
+          return loadProfilePhoto({ sessionToken });
+        }
+
+        return showSnackbar(uploadPhotoResponse.message);
       }
 
-      return showSnackbar(response.message);
+      return showSnackbar(updateUserResponse.message);
     } catch (err) {
       return showSnackbar('failed to reach server.');
     }

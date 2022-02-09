@@ -1,16 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, StyleSheet } from 'react-native';
 import {
-  Modal, Avatar, Caption, Button, useTheme,
+  Modal, Avatar, Caption, Button, FAB, useTheme,
 } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import * as ImagePicker from 'expo-image-picker';
+import capitalise from '../helpers/strings';
 import ErrorStyles from '../styles/error';
 import Divider from './Divider';
 import TextInput from './TextInput';
-import capitalise from '../helpers/strings';
 
 const schema = yup
   .object({
@@ -35,6 +36,10 @@ const styles = ({ colors }) => StyleSheet.create({
   },
   avatarWrapper: {
     paddingTop: 32,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   avatar: {
     marginBottom: 32,
@@ -44,6 +49,12 @@ const styles = ({ colors }) => StyleSheet.create({
   },
   button: {
     flexDirection: 'row-reverse',
+  },
+  fab: {
+    position: 'absolute',
+    right: 0,
+    bottom: '25%',
+    backgroundColor: colors.page,
   },
 });
 
@@ -64,6 +75,8 @@ export default function ProfileEditModal({
 
   const theme = useTheme();
 
+  const [stagedPhoto, setStagedPhoto] = useState('');
+
   useEffect(() => {
     setValue('firstName', user.firstName);
     setValue('lastName', user.lastName);
@@ -71,7 +84,21 @@ export default function ProfileEditModal({
 
   const onSaveWithReset = (data) => {
     reset();
-    onSave({ ...user, ...data });
+    onSave({ ...user, ...data, profilePhoto: stagedPhoto });
+    setStagedPhoto('');
+  };
+
+  const onPickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setStagedPhoto(result.uri);
+    }
   };
 
   return (
@@ -85,8 +112,9 @@ export default function ProfileEditModal({
           size={144}
           style={styles(theme).avatar}
           theme={theme}
-          source={{ uri: profilePhoto }}
+          source={{ uri: stagedPhoto || profilePhoto }}
         />
+        <FAB style={styles(theme).fab} color={theme.colors.primary} icon="cloud-upload" onPress={onPickImage} />
         <Divider text="Details" />
       </View>
       <View style={styles(theme).wrapper}>

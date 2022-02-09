@@ -258,7 +258,50 @@ export async function getProfilePhoto({ userId, sessionToken }) {
       };
       break;
     case 404:
-      returnValue = { ok: false, message: 'no profile picture found.' };
+      returnValue = { ok: false, message: 'no user / profile picture found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
+ *
+ * @param {Object} request
+ * @param {string} request.userId
+ * @param {string} request.sessionToken
+ * @param {Blob} request.photo
+ */
+export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
+  const response = await fetch(url(`user/${userId}/photo`), {
+    method: 'POST',
+    headers: {
+      'Content-Type': photo.type,
+      'X-Authorization': sessionToken,
+    },
+    body: photo,
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'uploaded profile picture.' };
+      break;
+    case 400:
+      returnValue = { ok: false, message: 'invalid data to upload profile picture.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'no user / profile picture found' };
       break;
     case 500:
       returnValue = { ok: false, message: 'unable to reach server.' };
