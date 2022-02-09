@@ -12,7 +12,7 @@ const styles = ({ colors }) => StyleSheet.create({
     justifyContent: 'center',
   },
   line: {
-    width: '100%',
+    flex: 1,
     height: 1,
     marginHorizontal: 8,
     backgroundColor: colors.divider,
