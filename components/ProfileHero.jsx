@@ -70,7 +70,7 @@ export default function ProfileHero({
           <Menu.Item onPress={() => handleMenuPress(onLogout)} icon="log-out" title="Logout" />
         </Menu>
       </View>
-      <Avatar.Image size={144} theme={theme} source={{ uri: profilePhoto }} />
+      <Avatar.Image size={144} theme={theme} source={profilePhoto ? { uri: profilePhoto } : null} />
       <View style={styles.nameContainer}>
         <Headline style={styles.name}>{user?.firstName}</Headline>
         <Headline style={styles.name}>{user?.lastName}</Headline>

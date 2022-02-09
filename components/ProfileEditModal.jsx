@@ -112,7 +112,7 @@ export default function ProfileEditModal({
           size={144}
           style={styles(theme).avatar}
           theme={theme}
-          source={{ uri: stagedPhoto || profilePhoto }}
+          source={(stagedPhoto || profilePhoto) ? { uri: stagedPhoto || profilePhoto } : null}
         />
         <FAB style={styles(theme).fab} color={theme.colors.primary} icon="cloud-upload" onPress={onPickImage} />
         <Divider text="Details" />
