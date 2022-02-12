@@ -43,7 +43,7 @@ export async function login({ email, password }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -92,7 +92,7 @@ export async function signup({
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -129,7 +129,7 @@ export async function logout({ sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -173,7 +173,7 @@ export async function getUser({ userId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -220,7 +220,7 @@ export async function updateUser({ userId, sessionToken, user: { firstName, last
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -264,7 +264,7 @@ export async function getProfilePhoto({ userId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -307,7 +307,7 @@ export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -347,7 +347,7 @@ export async function getPosts({ userId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -395,7 +395,7 @@ export async function createPost({ userId, sessionToken, text }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -436,7 +436,7 @@ export async function getPost({ userId, postId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -485,7 +485,7 @@ export async function updatePost({
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -527,7 +527,7 @@ export async function deletePost({ userId, postId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -572,7 +572,7 @@ export async function likePost({ userId, postId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
@@ -617,7 +617,7 @@ export async function unlikePost({ userId, postId, sessionToken }) {
       returnValue = { ok: false, message: 'unable to reach server.' };
       break;
     default:
-      returnValue = { ok: false };
+      returnValue = { ok: false, message: 'something went wrong.' };
       break;
   }
 
