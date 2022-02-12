@@ -91,15 +91,20 @@ export default function App() {
    * Loads saved user login credentials to skip sign in process.
    */
   const loadSavedCredentials = async () => {
-    const userId = Number(await AsyncStorage.getItem('user_id'));
-    const sessionToken = await AsyncStorage.getItem('session_token');
+    try {
+      const userId = Number(await AsyncStorage.getItem('user_id'));
+      const sessionToken = await AsyncStorage.getItem('session_token');
 
-    if (userId && sessionToken) {
-      const { ok } = await getUser({ userId, sessionToken });
-      if (!ok) return;
+      if (userId && sessionToken) {
+        const { ok } = await getUser({ userId, sessionToken });
+        if (!ok) return;
 
-      setCurrentUserId(Number(userId));
-      setIsAuthenticated(true);
+        setCurrentUserId(Number(userId));
+        setIsAuthenticated(true);
+      }
+    } catch (err) {
+      setCurrentUserId(-1);
+      setIsAuthenticated(false);
     }
   };
 
