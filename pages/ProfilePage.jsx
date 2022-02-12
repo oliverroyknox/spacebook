@@ -168,15 +168,19 @@ export default function ProfilePage({ route, onUnauthenticate }) {
    * @param {number} data.post.postId The ID of the focused post.
    */
   const onShowPostModal = async ({ post: { postId } }) => {
-    const sessionToken = await AsyncStorage.getItem('session_token');
-    const response = await getPost({ userId, postId, sessionToken });
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const response = await getPost({ userId, postId, sessionToken });
 
-    if (response.ok) {
-      setIsPostModalVisible(true);
-      return setFocusedPost(response.body);
+      if (response.ok) {
+        setIsPostModalVisible(true);
+        return setFocusedPost(response.body);
+      }
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to show post, try again later.');
     }
-
-    return showSnackbar(response.message);
   };
 
   /**
@@ -252,7 +256,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
 
       return showSnackbar(updateUserResponse.message);
     } catch (err) {
-      return showSnackbar('failed to reach server.');
+      return showSnackbar('failed to save changes, try again later.');
     }
   };
 
@@ -270,7 +274,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
 
       return showSnackbar(response.message);
     } catch (err) {
-      return showSnackbar('failed to reach server.');
+      return showSnackbar('failed to log out, try again later.');
     }
   };
 
@@ -289,7 +293,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
 
       return showSnackbar(response.message);
     } catch (err) {
-      return showSnackbar('failed to reach server.');
+      return showSnackbar('failed to create a post, try again later.');
     }
   };
 
@@ -300,21 +304,25 @@ export default function ProfilePage({ route, onUnauthenticate }) {
    * @param {string} post.postId ID of post that was liked.
    */
   const onLikePost = async ({ post: { postId } }) => {
-    const sessionToken = await AsyncStorage.getItem('session_token');
-    const likeResponse = await likePost({ userId, postId, sessionToken });
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const likeResponse = await likePost({ userId, postId, sessionToken });
 
-    if (!likeResponse.ok && likeResponse.body?.isAlreadyLiked === true) {
-      // If already liked then try an unlike post.
-      const unlikeResponse = await unlikePost({ userId, postId, sessionToken });
+      if (!likeResponse.ok && likeResponse.body?.isAlreadyLiked === true) {
+        // If already liked then try an unlike post.
+        const unlikeResponse = await unlikePost({ userId, postId, sessionToken });
 
-      if (!unlikeResponse.ok) {
-        return showSnackbar(unlikeResponse.message);
+        if (!unlikeResponse.ok) {
+          return showSnackbar(unlikeResponse.message);
+        }
+      } else {
+        return showSnackbar(likeResponse.message);
       }
-    } else {
-      return showSnackbar(likeResponse.message);
-    }
 
-    return loadPosts({ sessionToken });
+      return loadPosts({ sessionToken });
+    } catch (err) {
+      return showSnackbar('failed to interact with post, try again later.');
+    }
   };
 
   /**
@@ -327,20 +335,23 @@ export default function ProfilePage({ route, onUnauthenticate }) {
     // As this `Modal` can be triggered from another.
     onDismissPostModal();
 
-    const data = { text };
-    const sessionToken = await AsyncStorage.getItem('session_token');
-    const response = await updatePost({
-      userId,
-      postId,
-      sessionToken,
-      post: data,
-    });
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const response = await updatePost({
+        userId,
+        postId,
+        sessionToken,
+        post: { text },
+      });
 
-    if (response.ok) {
-      return loadPosts({ sessionToken });
+      if (response.ok) {
+        return loadPosts({ sessionToken });
+      }
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to edit post, try again later.');
     }
-
-    return showSnackbar(response.message);
   };
 
   /**
@@ -351,14 +362,18 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   const onDeletePost = async ({ postId }) => {
     onDismissDialog();
 
-    const sessionToken = await AsyncStorage.getItem('session_token');
-    const response = await deletePost({ userId, postId, sessionToken });
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const response = await deletePost({ userId, postId, sessionToken });
 
-    if (response.ok) {
-      return loadPosts({ sessionToken });
+      if (response.ok) {
+        return loadPosts({ sessionToken });
+      }
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to delete post, try again later.');
     }
-
-    return showSnackbar(response.message);
   };
 
   /**
