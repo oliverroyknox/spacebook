@@ -102,7 +102,7 @@ export default function SignupPage({ navigation, onAuthenticate }) {
       }
       return showSnackbar(signupResponse.message);
     } catch (e) {
-      return showSnackbar('failed to reach server.');
+      return showSnackbar('failed to signup, try again later.');
     }
   };
 

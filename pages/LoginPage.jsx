@@ -51,7 +51,7 @@ export default function LoginPage({ navigation, onAuthenticate }) {
       }
       return showSnackbar(response.message);
     } catch (e) {
-      return showSnackbar('failed to reach server.');
+      return showSnackbar('failed to login, try again later.');
     }
   };
 
