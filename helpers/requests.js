@@ -139,7 +139,7 @@ export async function logout({ sessionToken }) {
 /**
  * Get user data.
  * @param {Object} request Request data.
- * @param {string} userId ID of user to get.
+ * @param {number} userId ID of user to get.
  * @param {string} sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -183,7 +183,7 @@ export async function getUser({ userId, sessionToken }) {
 /**
  * Update a user's data.
  * @param {Object} request Request data.
- * @param {string} userId ID of user to update.
+ * @param {number} userId ID of user to update.
  * @param {string} sessionToken Authorisation token from logged in user.
  * @param {Object} user Data fields of user to update.
  * @returns A parsed response object.
@@ -230,7 +230,7 @@ export async function updateUser({ userId, sessionToken, user: { firstName, last
 /**
  * Get profile photo of user.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of user to get profile photo of.
+ * @param {number} request.userId ID of user to get profile photo of.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -272,11 +272,12 @@ export async function getProfilePhoto({ userId, sessionToken }) {
 }
 
 /**
- *
- * @param {Object} request
- * @param {string} request.userId
- * @param {string} request.sessionToken
- * @param {Blob} request.photo
+ * Upload a profile photo for the user.
+ * @param {Object} request Request data.
+ * @param {number} request.userId ID of user to upload profile photo for.
+ * @param {string} request.sessionToken Authorisation token from logged in user.
+ * @param {Blob} request.photo Blob data of photo to upload.
+ * @returns A parsed response object.
  */
 export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
   const response = await fetch(url(`user/${userId}/photo`), {
@@ -317,7 +318,7 @@ export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
 /**
  * Get a list of posts for a given user.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of user to get posts of.
+ * @param {number} request.userId ID of user to get posts of.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -357,7 +358,7 @@ export async function getPosts({ userId, sessionToken }) {
 /**
  * Create a new post on the given user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user to create a post on their page.
+ * @param {number} request.userId ID of the user to create a post on their page.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @param {string} request.text Text contents of the post.
  * @returns A parsed response object.
@@ -405,8 +406,8 @@ export async function createPost({ userId, sessionToken, text }) {
 /**
  * Get a post on a given user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user to create a post on their page.
- * @param {string} request.postId ID of the post to get.
+ * @param {number} request.userId ID of the user to create a post on their page.
+ * @param {number} request.postId ID of the post to get.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -446,8 +447,8 @@ export async function getPost({ userId, postId, sessionToken }) {
 /**
  * Update a post on a given user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user who's profile the post to be updated is located.
- * @param {string} request.postId ID of the post to update.
+ * @param {number} request.userId ID of the user who's profile the post to be updated is located.
+ * @param {number} request.postId ID of the post to update.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -495,8 +496,8 @@ export async function updatePost({
 /**
  * Delete a post on a given user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user who's profle the post to be deleted is located.
- * @param {string} request.postId ID of the post to delete.
+ * @param {number} request.userId ID of the user who's profle the post to be deleted is located.
+ * @param {number} request.postId ID of the post to delete.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -537,8 +538,8 @@ export async function deletePost({ userId, postId, sessionToken }) {
 /**
  * Likes a post on a user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user's profile.
- * @param {string} request.postId ID of post to like.
+ * @param {number} request.userId ID of the user's profile.
+ * @param {number} request.postId ID of post to like.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
@@ -582,8 +583,8 @@ export async function likePost({ userId, postId, sessionToken }) {
 /**
  * Unlikes a post on a user's profile.
  * @param {Object} request Request data.
- * @param {string} request.userId ID of the user's profile.
- * @param {string} request.postId ID of post to unlike.
+ * @param {number} request.userId ID of the user's profile.
+ * @param {number} request.postId ID of post to unlike.
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */

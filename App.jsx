@@ -113,7 +113,7 @@ export default function App() {
   /**
    * Callback to set `isAuthenticated` state and update persistent storage.
    * @param {Object} userData Authenticated user's data.
-   * @param {string} userId ID of the authenticated user.
+   * @param {number} userId ID of the authenticated user.
    * @param {string} sessionToken Token granted on successful authentication.
    */
   const onAuthenticate = async ({ userId, sessionToken }) => {

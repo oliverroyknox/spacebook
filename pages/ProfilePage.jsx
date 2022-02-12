@@ -301,7 +301,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
    * Handles liking and unliking a post.
    * @param {Object} data Data from callback.
    * @param {Object} post Post that was liked.
-   * @param {string} post.postId ID of post that was liked.
+   * @param {number} post.postId ID of post that was liked.
    */
   const onLikePost = async ({ post: { postId } }) => {
     try {
@@ -357,7 +357,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   /**
    * Handles deleting a post.
    * @param {Object} data Data from callback.
-   * @param {string} data.postId ID of post to delete.
+   * @param {number} data.postId ID of post to delete.
    */
   const onDeletePost = async ({ postId }) => {
     onDismissDialog();
