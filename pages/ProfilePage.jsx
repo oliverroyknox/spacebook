@@ -119,10 +119,15 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
     });
 
     if (ok) {
-      return setIsFriend(!!friends.find((friendId) => friendId === userId));
+      // eslint-disable-next-line no-underscore-dangle
+      const _isFriend = !!friends.find(({ userId: friendId }) => friendId === userId);
+      setIsFriend(_isFriend);
+
+      return _isFriend;
     }
 
-    return setIsFriend(false);
+    setIsFriend(false);
+    return false;
   }
 
   useEffect(async () => {
@@ -134,10 +139,11 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
     const _signedInUserId = Number(await AsyncStorage.getItem('user_id'));
     setSignedInUserId(_signedInUserId);
 
-    await checkFriendship({ sessionToken, _signedInUserId });
+    // eslint-disable-next-line no-underscore-dangle
+    const _isFriend = await checkFriendship({ sessionToken, _signedInUserId });
 
     // only load posts of friends or self.
-    if (isFriend || userId === _signedInUserId) {
+    if (_isFriend || userId === _signedInUserId) {
       await loadPosts({ sessionToken });
     } else {
       setPosts([]);
