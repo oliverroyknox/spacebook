@@ -140,12 +140,24 @@ export default function App() {
 
   /**
    * Render `ProfilePage` with custom props.
-   * @param {Object} data Navigator props.
-   * @param {Object} data.route Navigator route.
    * @returns `ProfilePage` component.
    */
-  const renderProfilePage = ({ route }) => (
-    <ProfilePage route={route} onUnauthenticate={onUnauthenticate} />
+  const renderProfilePage = () => (
+    <ProfilePage
+      userId={currentUserId}
+      setUserId={setCurrentUserId}
+      onUnauthenticate={onUnauthenticate}
+    />
+  );
+
+  /**
+   * Render `SearchPage` with custom props.
+   * @param {Object} data Navigator props.
+   * @param {Object} data.navigation Navigator navigation.
+   * @returns `SearchPage` component.
+   */
+  const renderSearchPage = ({ navigation }) => (
+    <SearchPage navigation={navigation} setUserId={setCurrentUserId} />
   );
 
   /**
@@ -155,10 +167,7 @@ export default function App() {
    * @returns `LoginPage` component.
    */
   const renderLoginPage = ({ navigation }) => (
-    <LoginPage
-      navigation={navigation}
-      onAuthenticate={onAuthenticate}
-    />
+    <LoginPage navigation={navigation} onAuthenticate={onAuthenticate} />
   );
 
   /**
@@ -176,13 +185,8 @@ export default function App() {
       <NavigationContainer>
         {isAuthenticated ? (
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
-            <Stack.Screen
-              name="Profile"
-              initialParams={{ userId: currentUserId }}
-            >
-              {renderProfilePage}
-            </Stack.Screen>
-            <Stack.Screen name="Search" component={SearchPage} />
+            <Stack.Screen name="Profile">{renderProfilePage}</Stack.Screen>
+            <Stack.Screen name="Search">{renderSearchPage}</Stack.Screen>
             <Stack.Screen name="Friends" component={FriendsPage} />
           </Tab.Navigator>
         ) : (

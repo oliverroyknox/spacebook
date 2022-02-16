@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { View, FlatList, StyleSheet } from 'react-native';
 import {
-  Portal, Modal, Snackbar, useTheme,
+  Portal, Modal, Snackbar, Button, Paragraph, useTheme,
 } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -19,6 +19,7 @@ import {
   updatePost,
   deletePost,
   uploadProfilePhoto,
+  getFriends,
 } from '../helpers/requests';
 import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -49,13 +50,12 @@ const styles = StyleSheet.create({
   },
 });
 
-export default function ProfilePage({ route, onUnauthenticate }) {
-  const { userId } = route.params;
-
+export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   const [signedInUserId, setSignedInUserId] = useState(-1);
+  const [isFriend, setIsFriend] = useState(false);
   const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [posts, setPosts] = useState([]);
@@ -107,13 +107,41 @@ export default function ProfilePage({ route, onUnauthenticate }) {
     }
   }
 
+  /**
+   * Checks whether the currently signed in user is friends with the profile's user.
+   * @param {Object} userData requested user data to get another user.
+   * @param {string} userData.sessionToken Logged in user's authorisation token.
+   */
+  async function checkFriendship({ sessionToken, _signedInUserId }) {
+    const { ok, body: friends } = await getFriends({
+      userId: _signedInUserId,
+      sessionToken,
+    });
+
+    if (ok) {
+      return setIsFriend(!!friends.find((friendId) => friendId === userId));
+    }
+
+    return setIsFriend(false);
+  }
+
   useEffect(async () => {
     const sessionToken = await AsyncStorage.getItem('session_token');
     await loadUser({ sessionToken });
     await loadProfilePhoto({ sessionToken });
-    await loadPosts({ sessionToken });
 
-    setSignedInUserId(Number(await AsyncStorage.getItem('user_id')));
+    // eslint-disable-next-line no-underscore-dangle
+    const _signedInUserId = Number(await AsyncStorage.getItem('user_id'));
+    setSignedInUserId(_signedInUserId);
+
+    await checkFriendship({ sessionToken, _signedInUserId });
+
+    // only load posts of friends or self.
+    if (isFriend || userId === _signedInUserId) {
+      await loadPosts({ sessionToken });
+    } else {
+      setPosts([]);
+    }
 
     return () => {
       setUser(null);
@@ -121,7 +149,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
       setPosts([]);
       setSignedInUserId(-1);
     };
-  }, []);
+  }, [userId]);
 
   /**
    * Synchronises state when `PostDeleteDialog` is dismissed.
@@ -232,7 +260,11 @@ export default function ProfilePage({ route, onUnauthenticate }) {
     try {
       const sessionToken = await AsyncStorage.getItem('session_token');
       const data = { firstName, lastName };
-      const updateUserResponse = await updateUser({ userId, sessionToken, user: data });
+      const updateUserResponse = await updateUser({
+        userId,
+        sessionToken,
+        user: data,
+      });
 
       if (updateUserResponse.ok) {
         await loadPosts({ sessionToken });
@@ -279,6 +311,11 @@ export default function ProfilePage({ route, onUnauthenticate }) {
   };
 
   /**
+   * Handles going back to the "home" profile page.
+   */
+  const onGoToHome = async () => setUserId(signedInUserId);
+
+  /**
    * Handles creating a new post in the system.
    * @param {Object} data Post data.
    * @param {string} text Text content of a post.
@@ -310,7 +347,11 @@ export default function ProfilePage({ route, onUnauthenticate }) {
 
       if (!likeResponse.ok && likeResponse.body?.isAlreadyLiked === true) {
         // If already liked then try an unlike post.
-        const unlikeResponse = await unlikePost({ userId, postId, sessionToken });
+        const unlikeResponse = await unlikePost({
+          userId,
+          postId,
+          sessionToken,
+        });
 
         if (!unlikeResponse.ok) {
           return showSnackbar(unlikeResponse.message);
@@ -430,21 +471,33 @@ export default function ProfilePage({ route, onUnauthenticate }) {
       <ProfileHero
         profilePhoto={profilePhoto}
         user={user}
+        isNested={isFriend || userId === signedInUserId}
         onEdit={onEditProfile}
         onLogout={onLogout}
+        onGoToHome={onGoToHome}
       />
       <View style={styles.spacing}>
         <Divider text="Posts" />
       </View>
-      <FlatList
-        style={[styles.postList]}
-        contentContainerStyle={styles.postContent}
-        data={posts}
-        ListHeaderComponent={<PostCompose onPost={onPost} />}
-        ListHeaderComponentStyle={styles.postContent}
-        renderItem={renderPost}
-        keyExtractor={(item) => item.postId}
-      />
+      {(isFriend || userId === signedInUserId) ? (
+        <FlatList
+          style={[styles.postList]}
+          contentContainerStyle={styles.postContent}
+          data={posts}
+          ListHeaderComponent={<PostCompose onPost={onPost} />}
+          ListHeaderComponentStyle={styles.postContent}
+          renderItem={renderPost}
+          keyExtractor={(item) => item.postId}
+        />
+      ) : (
+        <View style={styles.postList}>
+          <Button style={{ marginVertical: 16 }} mode="outlined">Add Friend</Button>
+          <Paragraph style={{ textAlign: 'center' }}>
+            {user?.firstName}
+            &apos;s posts are hidden until they are a friend.
+          </Paragraph>
+        </View>
+      )}
       <Portal>
         {user && (
           <ProfileEditModal
@@ -489,10 +542,7 @@ export default function ProfilePage({ route, onUnauthenticate }) {
 }
 
 ProfilePage.propTypes = {
-  route: PropTypes.shape({
-    params: PropTypes.shape({
-      userId: PropTypes.number.isRequired,
-    }).isRequired,
-  }).isRequired,
+  userId: PropTypes.number.isRequired,
+  setUserId: PropTypes.func.isRequired,
   onUnauthenticate: PropTypes.func.isRequired,
 };

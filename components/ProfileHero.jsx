@@ -39,7 +39,12 @@ const styles = StyleSheet.create({
 });
 
 export default function ProfileHero({
-  profilePhoto, user, onEdit, onLogout,
+  profilePhoto,
+  user,
+  isNested,
+  onEdit,
+  onLogout,
+  onGoToHome,
 }) {
   const theme = useTheme();
 
@@ -63,14 +68,40 @@ export default function ProfileHero({
         <Menu
           visible={isMenuVisible}
           onDismiss={closeMenu}
-          anchor={<IconButton icon="ellipsis-horizontal" color={theme.colors.primary} onPress={openMenu} />}
+          anchor={
+            isNested ? (
+              <IconButton
+                icon="ellipsis-horizontal"
+                color={theme.colors.primary}
+                onPress={openMenu}
+              />
+            ) : (
+              <IconButton
+                icon="home"
+                color={theme.colors.primary}
+                onPress={onGoToHome}
+              />
+            )
+          }
         >
-          <Menu.Item onPress={() => handleMenuPress(onEdit)} icon="create" title="Edit Profile" />
+          <Menu.Item
+            onPress={() => handleMenuPress(onEdit)}
+            icon="create"
+            title="Edit Profile"
+          />
           <Divider />
-          <Menu.Item onPress={() => handleMenuPress(onLogout)} icon="log-out" title="Logout" />
+          <Menu.Item
+            onPress={() => handleMenuPress(onLogout)}
+            icon="log-out"
+            title="Logout"
+          />
         </Menu>
       </View>
-      <Avatar.Image size={144} theme={theme} source={profilePhoto ? { uri: profilePhoto } : null} />
+      <Avatar.Image
+        size={144}
+        theme={theme}
+        source={profilePhoto ? { uri: profilePhoto } : null}
+      />
       <View style={styles.nameContainer}>
         <Headline style={styles.name}>{user?.firstName}</Headline>
         <Headline style={styles.name}>{user?.lastName}</Headline>
@@ -85,8 +116,10 @@ ProfileHero.propTypes = {
     firstName: PropTypes.string.isRequired,
     lastName: PropTypes.string.isRequired,
   }),
+  isNested: PropTypes.bool.isRequired,
   onEdit: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
+  onGoToHome: PropTypes.func.isRequired,
 };
 
 ProfileHero.defaultProps = {
