@@ -362,7 +362,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
         if (!unlikeResponse.ok) {
           return showSnackbar(unlikeResponse.message);
         }
-      } else {
+      } else if (!likeResponse.ok) {
         return showSnackbar(likeResponse.message);
       }
 
@@ -477,7 +477,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
       <ProfileHero
         profilePhoto={profilePhoto}
         user={user}
-        isNested={isFriend || userId === signedInUserId}
+        isNested={userId !== signedInUserId}
         onEdit={onEditProfile}
         onLogout={onLogout}
         onGoToHome={onGoToHome}

@@ -636,7 +636,7 @@ export async function likePost({ userId, postId, sessionToken }) {
 
   switch (response.status) {
     case 200:
-      returnValue = { ok: true, message: 'liked post.', body: await response.json() };
+      returnValue = { ok: true, message: 'liked post.' };
       break;
     case 400:
       returnValue = { ok: false, message: 'this post has already been liked.', body: { isAlreadyLiked: true } };
@@ -681,7 +681,7 @@ export async function unlikePost({ userId, postId, sessionToken }) {
 
   switch (response.status) {
     case 200:
-      returnValue = { ok: true, message: 'unliked post.', body: await response.json() };
+      returnValue = { ok: true, message: 'unliked post.' };
       break;
     case 400:
       returnValue = { ok: false, message: 'this post has already been unliked.', body: { isAlreadyUnliked: true } };

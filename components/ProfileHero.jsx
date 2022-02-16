@@ -69,7 +69,7 @@ export default function ProfileHero({
           visible={isMenuVisible}
           onDismiss={closeMenu}
           anchor={
-            isNested ? (
+            !isNested ? (
               <IconButton
                 icon="ellipsis-horizontal"
                 color={theme.colors.primary}
