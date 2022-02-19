@@ -174,37 +174,39 @@ export default function SearchPage({ navigation, setUserId }) {
   }, [pageNum]);
 
   return (
-    <ScrollView style={PageStyles(theme, insets).page}>
-      <View style={styles.searchWrapper}>
-        <Searchbar
-          placeholder="Search"
-          onChangeText={onSearchChange}
-          value={searchQuery}
-        />
-      </View>
-      <View style={styles.paginationWrapper}>
-        <IconButton
-          icon="arrow-back-circle"
-          color={theme.colors.primary}
-          disabled={!hasPagePrev}
-          onPress={prevPage}
-        />
-        <Caption>
-          Page
-          {' '}
-          {pageNum + 1}
-        </Caption>
-        <IconButton
-          icon="arrow-forward-circle"
-          color={theme.colors.primary}
-          disabled={!hasPageNext}
-          onPress={nextPage}
-        />
-      </View>
-      <List.Section>
-        <List.Subheader>Suggestions</List.Subheader>
-        {renderUsers()}
-      </List.Section>
+    <View style={PageStyles(theme, insets).page}>
+      <ScrollView>
+        <View style={styles.searchWrapper}>
+          <Searchbar
+            placeholder="Search"
+            onChangeText={onSearchChange}
+            value={searchQuery}
+          />
+        </View>
+        <View style={styles.paginationWrapper}>
+          <IconButton
+            icon="arrow-back-circle"
+            color={theme.colors.primary}
+            disabled={!hasPagePrev}
+            onPress={prevPage}
+          />
+          <Caption>
+            Page
+            {' '}
+            {pageNum + 1}
+          </Caption>
+          <IconButton
+            icon="arrow-forward-circle"
+            color={theme.colors.primary}
+            disabled={!hasPageNext}
+            onPress={nextPage}
+          />
+        </View>
+        <List.Section>
+          <List.Subheader>Suggestions</List.Subheader>
+          {renderUsers()}
+        </List.Section>
+      </ScrollView>
       <Snackbar
         visible={isSnackbarVisible}
         onDismiss={onDismissSnackbar}
@@ -212,7 +214,7 @@ export default function SearchPage({ navigation, setUserId }) {
       >
         {snackbarMessage}
       </Snackbar>
-    </ScrollView>
+    </View>
   );
 }
 
