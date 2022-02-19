@@ -20,6 +20,7 @@ import {
   deletePost,
   uploadProfilePhoto,
   getFriends,
+  addFriend,
 } from '../helpers/requests';
 import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
@@ -321,6 +322,17 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
    */
   const onGoToHome = async () => setUserId(signedInUserId);
 
+  const onAddFriend = async () => {
+    try {
+      const sessionToken = await AsyncStorage.getItem('session_token');
+      const response = await addFriend({ userId, sessionToken });
+
+      return showSnackbar(response.message);
+    } catch (err) {
+      return showSnackbar('failed to create a post, try again later.');
+    }
+  };
+
   /**
    * Handles creating a new post in the system.
    * @param {Object} data Post data.
@@ -497,7 +509,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
         />
       ) : (
         <View style={styles.postList}>
-          <Button style={{ marginVertical: 16 }} mode="outlined">Add Friend</Button>
+          <Button style={{ marginVertical: 16 }} mode="outlined" onPress={onAddFriend}>Add Friend</Button>
           <Paragraph style={{ textAlign: 'center' }}>
             {user?.firstName}
             &apos;s posts are hidden until they are a friend.
