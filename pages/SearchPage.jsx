@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { searchUsers } from '../helpers/requests';
 import PageStyles from '../styles/page';
 import capitalise from '../helpers/strings';
+import UserListItem from '../components/UserListItem';
 
 const styles = StyleSheet.create({
   searchWrapper: {
@@ -29,10 +30,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 });
-
-const renderListIconRight = ({ color, style }) => (
-  <List.Icon color={color} style={style} icon="chevron-forward" />
-);
 
 const LIMIT = 10;
 
@@ -157,11 +154,12 @@ export default function SearchPage({ navigation, setUserId }) {
    */
   function renderUsers() {
     return users.map(({ userId, userGivenname, userFamilyname }) => (
-      <List.Item
+      <UserListItem
         key={userId}
-        title={`${userGivenname} ${userFamilyname}`}
-        onPress={() => onGoToUser({ userId })}
-        right={renderListIconRight}
+        userId={userId}
+        firstName={userGivenname}
+        lastName={userFamilyname}
+        onGoToUser={onGoToUser}
       />
     ));
   }
