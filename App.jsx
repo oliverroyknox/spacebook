@@ -76,6 +76,7 @@ const Theme = {
     ...DefaultTheme.colors,
     primary: '#218FFF',
     error: '#ff4646',
+    success: '#34c759',
     page: '#fff',
     divider: '#dcdcdc',
     header: '#3d5f7d',
@@ -161,6 +162,16 @@ export default function App() {
   );
 
   /**
+   * Render `FriendsPage` with custom props.
+   * @param {Object} data Navigator props.
+   * @param {Object} data.navigation Navigator navigation.
+   * @returns `FriendsPage` component.
+   */
+  const renderFriendsPage = ({ navigation }) => (
+    <FriendsPage navigation={navigation} setUserId={setCurrentUserId} />
+  );
+
+  /**
    * Render `LoginPage` with custom props.
    * @param {Object} data Navigator props.
    * @param {Object} data.navigation Navigator navigation.
@@ -187,7 +198,7 @@ export default function App() {
           <Tab.Navigator screenOptions={setTabNavigatorScreenOptions}>
             <Stack.Screen name="Profile">{renderProfilePage}</Stack.Screen>
             <Stack.Screen name="Search">{renderSearchPage}</Stack.Screen>
-            <Stack.Screen name="Friends" component={FriendsPage} />
+            <Stack.Screen name="Friends">{renderFriendsPage}</Stack.Screen>
           </Tab.Navigator>
         ) : (
           <Stack.Navigator>

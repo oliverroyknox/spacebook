@@ -422,6 +422,113 @@ export async function addFriend({ userId, sessionToken }) {
 }
 
 /**
+ * Gets outstanding friend requests of currently logged in user.
+ * @param {Object} request Request data.
+ * @param {string} request.sessionToken Authorisation token of the currently logged in user.
+ * @returns A parsed response object.
+ */
+export async function getFriendRequests({ sessionToken }) {
+  const response = await fetch(url('friendrequests'), {
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'got friend requests.', body: camelcase(await response.json()) };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false, message: 'something went wrong.' };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
+ * Accepts a pending friend request.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of user who's friend request should be accepted.
+ * @returns A parsed response object.
+ */
+export async function acceptFriendRequest({ userId, sessionToken }) {
+  const response = await fetch(url(`friendrequests/${userId}`), {
+    method: 'POST',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'accepted friend request.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'user not found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false, message: 'something went wrong.' };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
+ * Declines a pending friend request.
+ * @param {Object} request Request data.
+ * @param {string} request.userId ID of user who's friend request should be declined.
+ * @returns A parsed response object.
+ */
+export async function declineFriendRequest({ userId, sessionToken }) {
+  const response = await fetch(url(`friendrequests/${userId}`), {
+    method: 'DELETE',
+    headers: {
+      'X-Authorization': sessionToken,
+    },
+  });
+
+  let returnValue = null;
+
+  switch (response.status) {
+    case 200:
+      returnValue = { ok: true, message: 'accepted friend request.' };
+      break;
+    case 401:
+      returnValue = { ok: false, message: 'not authorised to perform this action.' };
+      break;
+    case 404:
+      returnValue = { ok: false, message: 'user not found.' };
+      break;
+    case 500:
+      returnValue = { ok: false, message: 'unable to reach server.' };
+      break;
+    default:
+      returnValue = { ok: false, message: 'something went wrong.' };
+      break;
+  }
+
+  return returnValue;
+}
+
+/**
  * Searches for users in the system.
  * @param {Object} request Request data.
  * @param {string} request.sessionToken Authorisation token from logged in user.
