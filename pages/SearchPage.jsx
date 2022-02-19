@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
+import { ScrollView, View, StyleSheet } from 'react-native';
 import {
-  ScrollView, View, StyleSheet,
-} from 'react-native';
-import {
-  Searchbar, Snackbar, List, useTheme,
+  Searchbar,
+  Snackbar,
+  List,
+  useTheme,
+  IconButton,
+  Caption,
 } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -16,18 +19,81 @@ const styles = StyleSheet.create({
   searchWrapper: {
     padding: 16,
   },
+  paginationWrapper: {
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    marginHorizontal: '25%',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
 });
 
-const renderListIconRight = ({ color, style }) => <List.Icon color={color} style={style} icon="chevron-forward" />;
+const renderListIconRight = ({ color, style }) => (
+  <List.Icon color={color} style={style} icon="chevron-forward" />
+);
+
+const LIMIT = 10;
 
 export default function SearchPage({ navigation, setUserId }) {
   const theme = useTheme();
   const insets = useSafeAreaInsets();
 
   const [searchQuery, setSearchQuery] = useState('');
+  const [pageNum, setPageNum] = useState(0);
+  const [isLoadingPage, setIsLoadingPage] = useState(false);
+  const [hasPagePrev, setHasPagePrev] = useState(false);
+  const [hasPageNext, setHasPageNext] = useState(false);
   const [users, setUsers] = useState([]);
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
+
+  /**
+   * Check if there is a next page.
+   */
+  async function checkNextPage() {
+    const sessionToken = await AsyncStorage.getItem('session_token');
+    const response = await searchUsers({
+      sessionToken,
+      query: searchQuery,
+      offset: LIMIT * (pageNum + 1),
+      limit: LIMIT,
+    });
+
+    if (response.ok) {
+      setHasPageNext(response.body.length > 0);
+    } else {
+      setHasPageNext(false);
+    }
+  }
+
+  /**
+   * Check if there is a previous page.
+   */
+  async function checkPrevPage() {
+    setHasPagePrev(pageNum > 0);
+  }
+
+  /**
+   * Load next page.
+   */
+  const nextPage = async () => {
+    if (hasPageNext && !isLoadingPage) {
+      setPageNum(pageNum + 1);
+      setIsLoadingPage(true);
+    }
+  };
+
+  /**
+   * Load previous page.
+   */
+  const prevPage = async () => {
+    if (hasPagePrev && !isLoadingPage) {
+      setPageNum(pageNum - 1);
+      setIsLoadingPage(true);
+    }
+  };
 
   /**
    * Shows a `Snackbar` with the given message.
@@ -44,9 +110,17 @@ export default function SearchPage({ navigation, setUserId }) {
    */
   const onSearch = async (query) => {
     const sessionToken = await AsyncStorage.getItem('session_token');
-    const response = await searchUsers({ sessionToken, query, offset: 0 });
+    const response = await searchUsers({
+      sessionToken,
+      query,
+      offset: LIMIT * pageNum,
+      limit: LIMIT,
+    });
 
     if (response.ok) {
+      await checkNextPage();
+      await checkPrevPage();
+
       return setUsers(response.body);
     }
 
@@ -83,13 +157,23 @@ export default function SearchPage({ navigation, setUserId }) {
    */
   function renderUsers() {
     return users.map(({ userId, userGivenname, userFamilyname }) => (
-      <List.Item key={userId} title={`${userGivenname} ${userFamilyname}`} onPress={() => onGoToUser({ userId })} right={renderListIconRight} />
+      <List.Item
+        key={userId}
+        title={`${userGivenname} ${userFamilyname}`}
+        onPress={() => onGoToUser({ userId })}
+        right={renderListIconRight}
+      />
     ));
   }
 
   useEffect(async () => {
     await onSearch('');
   }, []);
+
+  useEffect(async () => {
+    await onSearch(searchQuery);
+    setTimeout(() => setIsLoadingPage(false), 300);
+  }, [pageNum]);
 
   return (
     <ScrollView style={PageStyles(theme, insets).page}>
@@ -98,6 +182,25 @@ export default function SearchPage({ navigation, setUserId }) {
           placeholder="Search"
           onChangeText={onSearchChange}
           value={searchQuery}
+        />
+      </View>
+      <View style={styles.paginationWrapper}>
+        <IconButton
+          icon="arrow-back-circle"
+          color={theme.colors.primary}
+          disabled={!hasPagePrev}
+          onPress={prevPage}
+        />
+        <Caption>
+          Page
+          {' '}
+          {pageNum + 1}
+        </Caption>
+        <IconButton
+          icon="arrow-forward-circle"
+          color={theme.colors.primary}
+          disabled={!hasPageNext}
+          onPress={nextPage}
         />
       </View>
       <List.Section>
