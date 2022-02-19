@@ -105,6 +105,11 @@ export default function SearchPage({ navigation, setUserId }) {
   }
 
   /**
+   * Synchronises state when `Snackbar` is dismissed.
+   */
+  const onDismissSnackbar = () => setIsSnackbarVisible(false);
+
+  /**
    * Handles searching for users from query string.
    * @param {string} query Query to use in search.
    */
@@ -145,11 +150,6 @@ export default function SearchPage({ navigation, setUserId }) {
     setUserId(userId);
     navigation.navigate('Profile');
   };
-
-  /**
-   * Synchronises state when `Snackbar` is dismissed.
-   */
-  const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
   /**
    * Renders a list of user items.
