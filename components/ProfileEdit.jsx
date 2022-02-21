@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Modal, Avatar, Caption, Button, FAB, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -8,6 +8,7 @@ import * as yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
 import capitalise from '../helpers/strings';
 import ErrorStyles from '../styles/error';
+import ProfileStyles from '../styles/profile';
 import Divider from './Divider';
 import TextInput from './TextInput';
 
@@ -22,40 +23,6 @@ const defaultValues = {
 	firstName: '',
 	lastName: '',
 };
-
-const styles = ({ colors }) =>
-	StyleSheet.create({
-		modal: {
-			backgroundColor: colors.page,
-			flex: 2 / 3,
-			alignItems: 'center',
-			justifyContent: 'space-between',
-			padding: 16,
-			marginHorizontal: 16,
-		},
-		avatarWrapper: {
-			paddingTop: 32,
-			width: '100%',
-			display: 'flex',
-			alignItems: 'center',
-			justifyContent: 'center',
-		},
-		avatar: {
-			marginBottom: 32,
-		},
-		wrapper: {
-			width: '100%',
-		},
-		button: {
-			flexDirection: 'row-reverse',
-		},
-		fab: {
-			position: 'absolute',
-			right: 0,
-			bottom: '25%',
-			backgroundColor: colors.page,
-		},
-	});
 
 export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, onSave }) {
 	const {
@@ -95,13 +62,13 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 	};
 
 	return (
-		<Modal contentContainerStyle={styles(theme).modal} visible={visible} onDismiss={onDismiss}>
-			<View style={styles(theme).avatarWrapper}>
-				<Avatar.Image size={144} style={styles(theme).avatar} theme={theme} source={stagedPhoto || profilePhoto ? { uri: stagedPhoto || profilePhoto } : null} />
-				<FAB style={styles(theme).fab} color={theme.colors.primary} icon="cloud-upload" onPress={onPickImage} />
+		<Modal contentContainerStyle={ProfileStyles(theme).modal} visible={visible} onDismiss={onDismiss}>
+			<View style={ProfileStyles(theme).avatarWrapper}>
+				<Avatar.Image size={144} style={ProfileStyles(theme).avatar} theme={theme} source={stagedPhoto || profilePhoto ? { uri: stagedPhoto || profilePhoto } : null} />
+				<FAB style={ProfileStyles(theme).fab} color={theme.colors.primary} icon="cloud-upload" onPress={onPickImage} />
 				<Divider text="Details" />
 			</View>
-			<View style={styles(theme).wrapper}>
+			<View style={ProfileStyles(theme).wrapper}>
 				<View>
 					<TextInput control={control} name="firstName" label="First Name" />
 					<Caption style={ErrorStyles(theme).caption}>{errors.firstName && capitalise(errors.firstName.message)}</Caption>
@@ -111,8 +78,8 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 					<Caption style={ErrorStyles(theme).caption}>{errors.lastName && capitalise(errors.lastName.message)}</Caption>
 				</View>
 			</View>
-			<View style={styles(theme).wrapper}>
-				<Button icon="save" contentStyle={styles(theme).button} onPress={handleSubmit(onSaveWithReset)} mode="contained">
+			<View style={ProfileStyles(theme).wrapper}>
+				<Button icon="save" contentStyle={ProfileStyles(theme).button} onPress={handleSubmit(onSaveWithReset)} mode="contained">
 					Save
 				</Button>
 			</View>

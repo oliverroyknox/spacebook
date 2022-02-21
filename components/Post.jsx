@@ -1,26 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Card, Caption, Paragraph, Button, Badge, Menu, IconButton, useTheme } from 'react-native-paper';
-
-const styles = StyleSheet.create({
-	actions: {
-		flex: 1,
-		justifyContent: 'space-between',
-	},
-	actionsWrapper: {
-		flexDirection: 'row',
-		alignItems: 'center',
-	},
-	button: {
-		flexDirection: 'row-reverse',
-		minHeight: 16,
-	},
-	badge: {
-		marginRight: 8,
-		alignSelf: 'auto',
-	},
-});
+import PostStyles from '../styles/post';
 
 export default function Post({ post, onLike, onPress, onEdit, onDelete, isFocused }) {
 	const theme = useTheme();
@@ -57,7 +39,7 @@ export default function Post({ post, onLike, onPress, onEdit, onDelete, isFocuse
 					</Paragraph>
 				)}
 			</Card.Content>
-			<Card.Actions style={styles.actions}>
+			<Card.Actions style={PostStyles.actions}>
 				{onEdit || onDelete ? (
 					<Menu
 						visible={isMenuVisible}
@@ -70,13 +52,13 @@ export default function Post({ post, onLike, onPress, onEdit, onDelete, isFocuse
 				) : (
 					<View />
 				)}
-				<View style={styles.actionsWrapper}>
+				<View style={PostStyles.actionsWrapper}>
 					{onLike && (
-						<Button icon="heart" contentStyle={styles.button} onPress={() => onLike({ post })}>
+						<Button icon="heart" contentStyle={PostStyles.button} onPress={() => onLike({ post })}>
 							Like
 						</Button>
 					)}
-					<Badge style={styles.badge}>{post.numLikes}</Badge>
+					<Badge style={PostStyles.badge}>{post.numLikes}</Badge>
 				</View>
 			</Card.Actions>
 		</Card>

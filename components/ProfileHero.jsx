@@ -1,35 +1,8 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Avatar, Headline, Menu, Divider, IconButton, useTheme } from 'react-native-paper';
-
-const styles = StyleSheet.create({
-	container: {
-		width: '100%',
-		display: 'flex',
-		alignItems: 'center',
-		justifyContent: 'space-around',
-	},
-	toolbar: {
-		display: 'flex',
-		width: '100%',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'flex-end',
-	},
-	nameContainer: {
-		marginTop: 16,
-		width: '100%',
-		display: 'flex',
-		flexDirection: 'row',
-		alignItems: 'center',
-		justifyContent: 'center',
-	},
-	name: {
-		fontSize: 28,
-		marginHorizontal: 8,
-	},
-});
+import ProfileStyles from '../styles/profile';
 
 export default function ProfileHero({ profilePhoto, user, isNested, onEdit, onLogout, onGoToHome }) {
 	const theme = useTheme();
@@ -49,8 +22,8 @@ export default function ProfileHero({ profilePhoto, user, isNested, onEdit, onLo
 	};
 
 	return (
-		<View style={styles.container}>
-			<View style={styles.toolbar}>
+		<View style={ProfileStyles(theme).container}>
+			<View style={ProfileStyles(theme).toolbar}>
 				<Menu
 					visible={isMenuVisible}
 					onDismiss={closeMenu}
@@ -68,9 +41,9 @@ export default function ProfileHero({ profilePhoto, user, isNested, onEdit, onLo
 				</Menu>
 			</View>
 			<Avatar.Image size={144} theme={theme} source={profilePhoto ? { uri: profilePhoto } : null} />
-			<View style={styles.nameContainer}>
-				<Headline style={styles.name}>{user?.firstName}</Headline>
-				<Headline style={styles.name}>{user?.lastName}</Headline>
+			<View style={ProfileStyles(theme).nameContainer}>
+				<Headline style={ProfileStyles(theme).name}>{user?.firstName}</Headline>
+				<Headline style={ProfileStyles(theme).name}>{user?.lastName}</Headline>
 			</View>
 		</View>
 	);

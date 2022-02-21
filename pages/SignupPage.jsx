@@ -1,25 +1,15 @@
 import React, { useState, useRef } from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import capitalise from '../helpers/strings';
 import { login, signup } from '../helpers/requests';
 import PageStyles from '../styles/page';
+import SwiperStyles from '../styles/swiper';
 import SignupAuthForm from '../components/SignupAuthForm';
 import SignupDetailsForm from '../components/SignupDetailsForm';
-
-const { width } = Dimensions.get('window');
-
-const styles = StyleSheet.create({
-	swiperContainer: {
-		flex: 1,
-	},
-	swiperSlide: {
-		width,
-	},
-});
 
 export default function SignupPage({ navigation, onAuthenticate }) {
 	const tempData = { email: '', password: '' };
@@ -108,12 +98,12 @@ export default function SignupPage({ navigation, onAuthenticate }) {
 
 	return (
 		<View style={PageStyles(theme, insets).page}>
-			<View style={styles.swiperContainer}>
+			<View style={SwiperStyles().swiperContainer}>
 				<SwiperFlatList ref={swiperRef} disableGesture>
-					<View style={styles.swiperSlide}>
+					<View style={SwiperStyles().swiperSlide}>
 						<SignupAuthForm onContinue={onContinue} onLoginRedirect={onLoginRedirect} />
 					</View>
-					<View style={styles.swiperSlide}>
+					<View style={SwiperStyles().swiperSlide}>
 						<SignupDetailsForm onSignup={onSignup} onGoBack={onScrollToPrev} />
 					</View>
 				</SwiperFlatList>

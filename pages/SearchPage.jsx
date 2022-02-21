@@ -1,28 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View, StyleSheet } from 'react-native';
+import { ScrollView, View } from 'react-native';
 import { Searchbar, Snackbar, List, useTheme, IconButton, Caption } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { searchUsers } from '../helpers/requests';
-import PageStyles from '../styles/page';
 import capitalise from '../helpers/strings';
+import PageStyles from '../styles/page';
+import SearchStyles from '../styles/search';
+import PaginationStyles from '../styles/pagination';
 import User from '../components/User';
-
-const styles = StyleSheet.create({
-	searchWrapper: {
-		padding: 16,
-	},
-	paginationWrapper: {
-		paddingVertical: 8,
-		paddingHorizontal: 16,
-		marginHorizontal: '25%',
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'space-between',
-		alignItems: 'center',
-	},
-});
 
 const LIMIT = 10;
 
@@ -163,10 +150,10 @@ export default function SearchPage({ navigation, setUserId }) {
 	return (
 		<View style={PageStyles(theme, insets).page}>
 			<ScrollView>
-				<View style={styles.searchWrapper}>
+				<View style={SearchStyles.searchWrapper}>
 					<Searchbar placeholder="Search" onChangeText={onSearchChange} value={searchQuery} />
 				</View>
-				<View style={styles.paginationWrapper}>
+				<View style={PaginationStyles.paginationWrapper}>
 					<IconButton icon="arrow-back-circle" color={theme.colors.primary} disabled={!hasPagePrev} onPress={prevPage} />
 					<Caption>Page {pageNum + 1}</Caption>
 					<IconButton icon="arrow-forward-circle" color={theme.colors.primary} disabled={!hasPageNext} onPress={nextPage} />

@@ -8,6 +8,12 @@ const styles = ({ colors }, insets) =>
 			paddingTop: insets.top, // TODO replace with safe area provider
 			backgroundColor: colors.page,
 		},
+		spacing: {
+			marginVertical: 8,
+		},
+		alignment: {
+			marginHorizontal: 16,
+		},
 	});
 
 export default styles;

@@ -1,13 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet } from 'react-native';
 import { Button, Paragraph, Dialog, useTheme } from 'react-native-paper';
-
-const styles = StyleSheet.create({
-	button: {
-		flexDirection: 'row-reverse',
-	},
-});
+import PostStyles from '../styles/post';
 
 export default function PostDelete({ post, visible, onDismiss, onDelete }) {
 	const { colors } = useTheme();
@@ -20,7 +14,7 @@ export default function PostDelete({ post, visible, onDismiss, onDelete }) {
 			</Dialog.Content>
 			<Dialog.Actions>
 				<Button onPress={onDismiss}>Go Back</Button>
-				<Button icon="trash" color={colors.error} contentStyle={styles.button} onPress={() => onDelete(post)}>
+				<Button icon="trash" color={colors.error} contentStyle={PostStyles.button} onPress={() => onDelete(post)}>
 					Delete
 				</Button>
 			</Dialog.Actions>

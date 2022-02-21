@@ -17,10 +17,21 @@ const styles = StyleSheet.create({
 	item: {
 		marginVertical: 8,
 	},
+	titleContainer: {
+		width: '100%',
+		display: 'flex',
+		flexDirection: 'row',
+	},
 	title: {
 		fontSize: 32,
 		fontWeight: '700',
 		marginRight: 'auto',
+	},
+	icon: {
+		marginRight: 8,
+	},
+	signup: {
+		marginBottom: 24,
 	},
 });
 

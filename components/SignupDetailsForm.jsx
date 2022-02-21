@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { View, StyleSheet } from 'react-native';
+import { View } from 'react-native';
 import { Title, Caption, Button, useTheme } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useForm } from 'react-hook-form';
@@ -23,20 +23,6 @@ const defaultValues = {
 	lastName: '',
 };
 
-const styles = StyleSheet.create({
-	titleContainer: {
-		width: '100%',
-		display: 'flex',
-		flexDirection: 'row',
-	},
-	icon: {
-		marginRight: 8,
-	},
-	signup: {
-		marginBottom: 24,
-	},
-});
-
 export default function SignupDetailsForm({ onSignup, onGoBack }) {
 	const {
 		control,
@@ -48,8 +34,8 @@ export default function SignupDetailsForm({ onSignup, onGoBack }) {
 
 	return (
 		<View style={FormStyles.container}>
-			<View style={styles.titleContainer}>
-				{onGoBack && <Ionicons style={styles.icon} name="arrow-back" size={32} color="black" onPress={onGoBack} />}
+			<View style={FormStyles.titleContainer}>
+				{onGoBack && <Ionicons style={FormStyles.icon} name="arrow-back" size={32} color="black" onPress={onGoBack} />}
 				<Title style={FormStyles.title}>Details</Title>
 			</View>
 			<View style={FormStyles.content}>
@@ -63,7 +49,7 @@ export default function SignupDetailsForm({ onSignup, onGoBack }) {
 				</View>
 			</View>
 			<View style={FormStyles.content}>
-				<Button style={styles.signup} onPress={handleSubmit(onSignup)} mode="contained">
+				<Button style={FormStyles.signup} onPress={handleSubmit(onSignup)} mode="contained">
 					Continue
 				</Button>
 			</View>

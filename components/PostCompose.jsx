@@ -1,21 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet } from 'react-native';
 import { Card, TextInput, Button } from 'react-native-paper';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import PostStyles from '../styles/post';
 
 const schema = yup.object({ text: yup.string().required() });
-
-const styles = StyleSheet.create({
-	actions: {
-		marginLeft: 'auto',
-	},
-	button: {
-		flexDirection: 'row-reverse',
-	},
-});
 
 export default function PostCompose({ onPost }) {
 	const { control, handleSubmit, reset } = useForm({
@@ -43,8 +34,8 @@ export default function PostCompose({ onPost }) {
 					)}
 				/>
 			</Card.Content>
-			<Card.Actions style={styles.actions}>
-				<Button icon="send" contentStyle={styles.button} onPress={handleSubmit(onPostWithReset)}>
+			<Card.Actions style={PostStyles.singleAction}>
+				<Button icon="send" contentStyle={PostStyles.button} onPress={handleSubmit(onPostWithReset)}>
 					Post
 				</Button>
 			</Card.Actions>

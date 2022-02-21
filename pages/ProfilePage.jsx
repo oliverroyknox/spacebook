@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, FlatList, StyleSheet } from 'react-native';
+import { View, FlatList } from 'react-native';
 import { Portal, Modal, Snackbar, Button, Paragraph, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,6 +23,7 @@ import {
 import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
+import PostStyles from '../styles/post';
 import ProfileHero from '../components/ProfileHero';
 import ProfileEdit from '../components/ProfileEdit';
 import Divider from '../components/Divider';
@@ -30,24 +31,6 @@ import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
 import PostEdit from '../components/PostEdit';
 import PostDelete from '../components/PostDelete';
-
-const styles = StyleSheet.create({
-	spacing: {
-		marginVertical: 8,
-	},
-	postList: {
-		paddingHorizontal: 16,
-	},
-	postContent: {
-		marginBottom: 8,
-	},
-	post: {
-		marginVertical: 8,
-	},
-	modalContent: {
-		marginHorizontal: 16,
-	},
-});
 
 export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 	const theme = useTheme();
@@ -437,7 +420,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		const isOwn = post.author.userId === signedInUserId;
 		const isFocused = Boolean(options?.isFocused);
 
-		const style = !isFocused && styles.post;
+		const style = !isFocused && PostStyles.postWrapper;
 
 		function renderCard() {
 			// According to API spec.
@@ -464,22 +447,22 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 	return (
 		<View style={[PageStyles(theme, insets).page]}>
 			<ProfileHero profilePhoto={profilePhoto} user={user} isNested={userId !== signedInUserId} onEdit={onEditProfile} onLogout={onLogout} onGoToHome={onGoToHome} />
-			<View style={styles.spacing}>
+			<View style={PageStyles(theme, insets).spacing}>
 				<Divider text="Posts" />
 			</View>
 			{isFriend || userId === signedInUserId ? (
 				<FlatList
-					style={[styles.postList]}
-					contentContainerStyle={styles.postContent}
+					style={PostStyles.postList}
+					contentContainerStyle={PostStyles.postListContent}
 					data={posts}
 					ListHeaderComponent={<PostCompose onPost={onPost} />}
-					ListHeaderComponentStyle={styles.postContent}
+					ListHeaderComponentStyle={PostStyles.postListContent}
 					renderItem={renderPost}
 					keyExtractor={item => item.postId}
 				/>
 			) : (
-				<View style={styles.postList}>
-					<Button style={{ marginVertical: 16 }} mode="outlined" onPress={onAddFriend}>
+				<View style={PostStyles.postList}>
+					<Button style={PageStyles(theme, insets).alignment} mode="outlined" onPress={onAddFriend}>
 						Add Friend
 					</Button>
 					<Paragraph style={{ textAlign: 'center' }}>
@@ -492,7 +475,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 				{user && <ProfileEdit profilePhoto={profilePhoto} user={user} visible={isProfileModalVisible} onDismiss={onDismissProfileModal} onSave={onSaveProfile} />}
 			</Portal>
 			<Portal>
-				<Modal visible={isPostModalVisible} onDismiss={onDismissPostModal} contentContainerStyle={styles.modalContent}>
+				<Modal visible={isPostModalVisible} onDismiss={onDismissPostModal} contentContainerStyle={PageStyles(theme, insets).alignment}>
 					{focusedPost && renderPost({ item: focusedPost }, { isFocused: true })}
 					{editingPost && <PostEdit post={editingPost} onSave={onEditPost} />}
 				</Modal>
