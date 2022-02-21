@@ -462,7 +462,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 				/>
 			) : (
 				<View style={PostStyles.postList}>
-					<Button style={PageStyles(theme, insets).alignment} mode="outlined" onPress={onAddFriend}>
+					<Button style={PageStyles(theme, insets).spacing} mode="outlined" onPress={onAddFriend}>
 						Add Friend
 					</Button>
 					<Paragraph style={{ textAlign: 'center' }}>

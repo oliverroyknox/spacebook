@@ -1,24 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import { View, ScrollView, StyleSheet } from 'react-native';
-import { TouchableRipple, List, Snackbar, useTheme } from 'react-native-paper';
+import { View, ScrollView } from 'react-native';
+import { List, Snackbar, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFriendRequests, getFriends, acceptFriendRequest, declineFriendRequest } from '../helpers/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
+import FriendRequest from '../components/FriendRequest';
 import User from '../components/User';
-
-const style = StyleSheet.create({
-	listIconWrapper: {
-		flex: 1,
-		flexDirection: 'row',
-		justifyContent: 'flex-end',
-	},
-	touchable: {
-		borderRadius: '50%',
-	},
-});
 
 export default function FriendsPage({ navigation, setUserId }) {
 	const theme = useTheme();
@@ -121,20 +111,9 @@ export default function FriendsPage({ navigation, setUserId }) {
 		navigation.navigate('Profile');
 	};
 
-	const renderListIconRight = ({ style: iconStyle, userId }) => (
-		<View style={style.listIconWrapper}>
-			<TouchableRipple style={style.touchable} onPress={() => onAcceptFriendRequest({ userId })}>
-				<List.Icon color={theme.colors.success} style={iconStyle} icon="checkmark-circle" />
-			</TouchableRipple>
-			<TouchableRipple style={style.touchable} onPress={() => onDeclineFriendRequest({ userId })}>
-				<List.Icon color={theme.colors.error} style={iconStyle} icon="close-circle" />
-			</TouchableRipple>
-		</View>
-	);
-
 	function renderFriendRequests() {
 		return friendRequests.map(({ userId, firstName, lastName }) => (
-			<List.Item key={userId} title={`${firstName} ${lastName}`} right={({ style: iconStyle }) => renderListIconRight({ style: iconStyle, userId })} />
+			<FriendRequest key={userId} userId={userId} firstName={firstName} lastName={lastName} onAccept={onAcceptFriendRequest} onDecline={onDeclineFriendRequest} />
 		));
 	}
 
