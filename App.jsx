@@ -42,8 +42,6 @@ export default function App() {
 		}
 	};
 
-	useEffect(loadSavedCredentials, []);
-
 	/**
 	 * Callback to set `isAuthenticated` state and update persistent storage.
 	 * @param {Object} userData Authenticated user's data.
@@ -71,6 +69,8 @@ export default function App() {
 		setIsAuthenticated(false);
 		setCurrentUserId(-1);
 	};
+
+	useEffect(loadSavedCredentials, []);
 
 	return (
 		<PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>

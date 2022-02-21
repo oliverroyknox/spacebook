@@ -9,14 +9,14 @@ import PostStyles from '../styles/post';
 export default function PostEdit({ post, onSave }) {
 	const { control, handleSubmit, setValue, reset } = useForm({ defaultValues: { text: '' }, resolver: yupResolver(PostSchema) });
 
-	useEffect(() => {
-		setValue('text', post.text);
-	}, []);
-
 	const onSaveWithReset = data => {
 		reset();
 		onSave({ ...post, ...data });
 	};
+
+	useEffect(() => {
+		setValue('text', post.text);
+	}, []);
 
 	return (
 		<Card mode="outlined">

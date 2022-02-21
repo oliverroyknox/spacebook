@@ -112,33 +112,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		return false;
 	}
 
-	useEffect(async () => {
-		const sessionToken = await AsyncStorage.getItem('session_token');
-		await loadUser({ sessionToken });
-		await loadProfilePhoto({ sessionToken });
-
-		// eslint-disable-next-line no-underscore-dangle
-		const _signedInUserId = Number(await AsyncStorage.getItem('user_id'));
-		setSignedInUserId(_signedInUserId);
-
-		// eslint-disable-next-line no-underscore-dangle
-		const _isFriend = await checkFriendship({ sessionToken, _signedInUserId });
-
-		// only load posts of friends or self.
-		if (_isFriend || userId === _signedInUserId) {
-			await loadPosts({ sessionToken });
-		} else {
-			setPosts([]);
-		}
-
-		return () => {
-			setUser(null);
-			setProfilePhoto('');
-			setPosts([]);
-			setSignedInUserId(-1);
-		};
-	}, [userId]);
-
 	/**
 	 * Synchronises state when `PostDeleteDialog` is dismissed.
 	 */
@@ -443,6 +416,33 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 
 		return <View style={style}>{renderCard()}</View>;
 	};
+
+	useEffect(async () => {
+		const sessionToken = await AsyncStorage.getItem('session_token');
+		await loadUser({ sessionToken });
+		await loadProfilePhoto({ sessionToken });
+
+		// eslint-disable-next-line no-underscore-dangle
+		const _signedInUserId = Number(await AsyncStorage.getItem('user_id'));
+		setSignedInUserId(_signedInUserId);
+
+		// eslint-disable-next-line no-underscore-dangle
+		const _isFriend = await checkFriendship({ sessionToken, _signedInUserId });
+
+		// only load posts of friends or self.
+		if (_isFriend || userId === _signedInUserId) {
+			await loadPosts({ sessionToken });
+		} else {
+			setPosts([]);
+		}
+
+		return () => {
+			setUser(null);
+			setProfilePhoto('');
+			setPosts([]);
+			setSignedInUserId(-1);
+		};
+	}, [userId]);
 
 	return (
 		<View style={[PageStyles(theme, insets).page]}>

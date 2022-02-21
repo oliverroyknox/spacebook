@@ -25,11 +25,6 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 
 	const [stagedPhoto, setStagedPhoto] = useState('');
 
-	useEffect(() => {
-		setValue('firstName', user.firstName);
-		setValue('lastName', user.lastName);
-	}, [user]);
-
 	const onSaveWithReset = data => {
 		reset();
 		onSave({ ...user, ...data, profilePhoto: stagedPhoto });
@@ -48,6 +43,11 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 			setStagedPhoto(result.uri);
 		}
 	};
+
+	useEffect(() => {
+		setValue('firstName', user.firstName);
+		setValue('lastName', user.lastName);
+	}, [user]);
 
 	return (
 		<Modal contentContainerStyle={ProfileStyles(theme).modal} visible={visible} onDismiss={onDismiss}>
