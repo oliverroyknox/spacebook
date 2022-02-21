@@ -7,7 +7,7 @@ import { baseUrl } from '../config/server.config.json';
  * @returns A safe URL.
  */
 function url(path) {
-  return new URL(path, baseUrl);
+	return new URL(path, baseUrl);
 }
 
 /**
@@ -18,36 +18,36 @@ function url(path) {
  * @returns A parsed response object.
  */
 export async function login({ email, password }) {
-  const response = await fetch(url('login'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ email, password }),
-  });
+	const response = await fetch(url('login'), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({ email, password }),
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'successful login.',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 400:
-      returnValue = { ok: false, message: 'invalid email or password.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'successful login.',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 400:
+			returnValue = { ok: false, message: 'invalid email or password.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -59,44 +59,42 @@ export async function login({ email, password }) {
  * @param {string} request.lastName Last name of user.
  * @returns A parsed response object.
  */
-export async function signup({
-  email, password, firstName, lastName,
-}) {
-  const response = await fetch(url('user'), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      email,
-      password,
-      first_name: firstName,
-      last_name: lastName,
-    }),
-  });
+export async function signup({ email, password, firstName, lastName }) {
+	const response = await fetch(url('user'), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+		body: JSON.stringify({
+			email,
+			password,
+			first_name: firstName,
+			last_name: lastName,
+		}),
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 201:
-      returnValue = {
-        ok: true,
-        message: 'successful signup.',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 400:
-      returnValue = { ok: false, message: 'invalid registration details.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 201:
+			returnValue = {
+				ok: true,
+				message: 'successful signup.',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 400:
+			returnValue = { ok: false, message: 'invalid registration details.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -106,34 +104,34 @@ export async function signup({
  * @returns A parsed response object.
  */
 export async function logout({ sessionToken }) {
-  const response = await fetch(url('logout'), {
-    method: 'POST',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url('logout'), {
+		method: 'POST',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'successful logout.' };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'successful logout.' };
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -144,40 +142,40 @@ export async function logout({ sessionToken }) {
  * @returns A parsed response object.
  */
 export async function getUser({ userId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}`), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got user data.',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'unauthorised to perform this action.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user data found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got user data.',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'unauthorised to perform this action.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user data found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -188,53 +186,49 @@ export async function getUser({ userId, sessionToken }) {
  * @param {Object} user Data fields of user to update.
  * @returns A parsed response object.
  */
-export async function updateUser({
-  userId,
-  sessionToken,
-  user: { firstName, lastName },
-}) {
-  const response = await fetch(url(`user/${userId}`), {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': sessionToken,
-    },
-    body: JSON.stringify({ first_name: firstName, last_name: lastName }),
-  });
+export async function updateUser({ userId, sessionToken, user: { firstName, lastName } }) {
+	const response = await fetch(url(`user/${userId}`), {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-Authorization': sessionToken,
+		},
+		body: JSON.stringify({ first_name: firstName, last_name: lastName }),
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'updated user.' };
-      break;
-    case 400:
-      returnValue = { ok: false, message: 'invalid data to update user.' };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'only able to update your own profile.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user data found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'updated user.' };
+			break;
+		case 400:
+			returnValue = { ok: false, message: 'invalid data to update user.' };
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'only able to update your own profile.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user data found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -245,40 +239,40 @@ export async function updateUser({
  * @returns A parsed response object.
  */
 export async function getProfilePhoto({ userId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/photo`), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/photo`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got user profile picture.',
-        body: await response.blob(),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'unauthorised to perform this action.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user / profile picture found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got user profile picture.',
+				body: await response.blob(),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'unauthorised to perform this action.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user / profile picture found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -290,45 +284,45 @@ export async function getProfilePhoto({ userId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
-  const response = await fetch(url(`user/${userId}/photo`), {
-    method: 'POST',
-    headers: {
-      'Content-Type': photo.type,
-      'X-Authorization': sessionToken,
-    },
-    body: photo,
-  });
+	const response = await fetch(url(`user/${userId}/photo`), {
+		method: 'POST',
+		headers: {
+			'Content-Type': photo.type,
+			'X-Authorization': sessionToken,
+		},
+		body: photo,
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'uploaded profile picture.' };
-      break;
-    case 400:
-      returnValue = {
-        ok: false,
-        message: 'invalid data to upload profile picture.',
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user / profile picture found' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'uploaded profile picture.' };
+			break;
+		case 400:
+			returnValue = {
+				ok: false,
+				message: 'invalid data to upload profile picture.',
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user / profile picture found' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -339,45 +333,45 @@ export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
  * @returns A parsed response object.
  */
 export async function getFriends({ userId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/friends`), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/friends`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got friends',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'can only view friends of yourself or friends.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user / friends found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
-  return returnValue;
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got friends',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'can only view friends of yourself or friends.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user / friends found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
+	return returnValue;
 }
 
 /**
@@ -388,37 +382,37 @@ export async function getFriends({ userId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function addFriend({ userId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/friends`), {
-    method: 'POST',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/friends`), {
+		method: 'POST',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 201:
-      returnValue = { ok: true, message: 'sent friend request.' };
-      break;
-    case 401:
-      returnValue = { ok: false, message: 'not authorised to perform this action.' };
-      break;
-    case 403:
-      returnValue = { ok: false, message: 'user is already added as a friend.' };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 201:
+			returnValue = { ok: true, message: 'sent friend request.' };
+			break;
+		case 401:
+			returnValue = { ok: false, message: 'not authorised to perform this action.' };
+			break;
+		case 403:
+			returnValue = { ok: false, message: 'user is already added as a friend.' };
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -428,30 +422,30 @@ export async function addFriend({ userId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function getFriendRequests({ sessionToken }) {
-  const response = await fetch(url('friendrequests'), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url('friendrequests'), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'got friend requests.', body: camelcase(await response.json()) };
-      break;
-    case 401:
-      returnValue = { ok: false, message: 'not authorised to perform this action.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'got friend requests.', body: camelcase(await response.json()) };
+			break;
+		case 401:
+			returnValue = { ok: false, message: 'not authorised to perform this action.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -461,34 +455,34 @@ export async function getFriendRequests({ sessionToken }) {
  * @returns A parsed response object.
  */
 export async function acceptFriendRequest({ userId, sessionToken }) {
-  const response = await fetch(url(`friendrequests/${userId}`), {
-    method: 'POST',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`friendrequests/${userId}`), {
+		method: 'POST',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'accepted friend request.' };
-      break;
-    case 401:
-      returnValue = { ok: false, message: 'not authorised to perform this action.' };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'user not found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'accepted friend request.' };
+			break;
+		case 401:
+			returnValue = { ok: false, message: 'not authorised to perform this action.' };
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'user not found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -498,34 +492,34 @@ export async function acceptFriendRequest({ userId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function declineFriendRequest({ userId, sessionToken }) {
-  const response = await fetch(url(`friendrequests/${userId}`), {
-    method: 'DELETE',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`friendrequests/${userId}`), {
+		method: 'DELETE',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'accepted friend request.' };
-      break;
-    case 401:
-      returnValue = { ok: false, message: 'not authorised to perform this action.' };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'user not found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'accepted friend request.' };
+			break;
+		case 401:
+			returnValue = { ok: false, message: 'not authorised to perform this action.' };
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'user not found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -538,52 +532,41 @@ export async function declineFriendRequest({ userId, sessionToken }) {
  * @param {number} request.searchIn Type of results to search for (`all` or `friends`).
  * @returns A parsed response object.
  */
-export async function searchUsers({
-  sessionToken,
-  query,
-  offset,
-  limit = 20,
-  searchIn = 'all',
-}) {
-  const response = await fetch(
-    url(
-      `search?q=${query}&search_in=${searchIn}&limit=${limit}&offset=${offset}`,
-    ),
-    {
-      headers: {
-        'X-Authorization': sessionToken,
-      },
-    },
-  );
+export async function searchUsers({ sessionToken, query, offset, limit = 20, searchIn = 'all' }) {
+	const response = await fetch(url(`search?q=${query}&search_in=${searchIn}&limit=${limit}&offset=${offset}`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got results',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 400:
-      returnValue = { ok: false, message: 'invalid data to perform search.' };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got results',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 400:
+			returnValue = { ok: false, message: 'invalid data to perform search.' };
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -594,46 +577,46 @@ export async function searchUsers({
  * @returns A parsed response object.
  */
 export async function getPosts({ userId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/post`), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/post`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got posts.',
-        body: camelcase(await response.json(), { deep: true }),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'can only view the posts of yourself or your friends.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no posts found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got posts.',
+				body: camelcase(await response.json(), { deep: true }),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'can only view the posts of yourself or your friends.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no posts found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -645,43 +628,43 @@ export async function getPosts({ userId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function createPost({ userId, sessionToken, text }) {
-  const response = await fetch(url(`user/${userId}/post`), {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': sessionToken,
-    },
-    body: JSON.stringify({ text }),
-  });
+	const response = await fetch(url(`user/${userId}/post`), {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-Authorization': sessionToken,
+		},
+		body: JSON.stringify({ text }),
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 201:
-      returnValue = {
-        ok: true,
-        message: 'created a post.',
-        body: camelcase(await response.json()),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no user data found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 201:
+			returnValue = {
+				ok: true,
+				message: 'created a post.',
+				body: camelcase(await response.json()),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no user data found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -693,46 +676,46 @@ export async function createPost({ userId, sessionToken, text }) {
  * @returns A parsed response object.
  */
 export async function getPost({ userId, postId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/post/${postId}`), {
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/post/${postId}`), {
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = {
-        ok: true,
-        message: 'got post.',
-        body: camelcase(await response.json(), { deep: true }),
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'can only view the posts of yourself or your friends.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no post found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = {
+				ok: true,
+				message: 'got post.',
+				body: camelcase(await response.json(), { deep: true }),
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'can only view the posts of yourself or your friends.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no post found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -743,51 +726,49 @@ export async function getPost({ userId, postId, sessionToken }) {
  * @param {string} request.sessionToken Authorisation token from logged in user.
  * @returns A parsed response object.
  */
-export async function updatePost({
-  userId, postId, sessionToken, post,
-}) {
-  const response = await fetch(url(`user/${userId}/post/${postId}`), {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Authorization': sessionToken,
-    },
-    body: JSON.stringify(post),
-  });
+export async function updatePost({ userId, postId, sessionToken, post }) {
+	const response = await fetch(url(`user/${userId}/post/${postId}`), {
+		method: 'PATCH',
+		headers: {
+			'Content-Type': 'application/json',
+			'X-Authorization': sessionToken,
+		},
+		body: JSON.stringify(post),
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'updated post.' };
-      break;
-    case 400:
-      returnValue = { ok: false, message: 'invalid data to update post.' };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'you can only update your own posts.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no post found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'updated post.' };
+			break;
+		case 400:
+			returnValue = { ok: false, message: 'invalid data to update post.' };
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'you can only update your own posts.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no post found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -799,43 +780,43 @@ export async function updatePost({
  * @returns A parsed response object.
  */
 export async function deletePost({ userId, postId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/post/${postId}`), {
-    method: 'DELETE',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/post/${postId}`), {
+		method: 'DELETE',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'delete post.' };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = {
-        ok: false,
-        message: 'you can only delete your own posts.',
-      };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no post found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'delete post.' };
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = {
+				ok: false,
+				message: 'you can only delete your own posts.',
+			};
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no post found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -847,47 +828,47 @@ export async function deletePost({ userId, postId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function likePost({ userId, postId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
-    method: 'POST',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
+		method: 'POST',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'liked post.' };
-      break;
-    case 400:
-      returnValue = {
-        ok: false,
-        message: 'this post has already been liked.',
-        body: { isAlreadyLiked: true },
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = { ok: false, message: 'can only like friends posts.' };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no post found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'liked post.' };
+			break;
+		case 400:
+			returnValue = {
+				ok: false,
+				message: 'this post has already been liked.',
+				body: { isAlreadyLiked: true },
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = { ok: false, message: 'can only like friends posts.' };
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no post found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }
 
 /**
@@ -899,45 +880,45 @@ export async function likePost({ userId, postId, sessionToken }) {
  * @returns A parsed response object.
  */
 export async function unlikePost({ userId, postId, sessionToken }) {
-  const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
-    method: 'DELETE',
-    headers: {
-      'X-Authorization': sessionToken,
-    },
-  });
+	const response = await fetch(url(`user/${userId}/post/${postId}/like`), {
+		method: 'DELETE',
+		headers: {
+			'X-Authorization': sessionToken,
+		},
+	});
 
-  let returnValue = null;
+	let returnValue = null;
 
-  switch (response.status) {
-    case 200:
-      returnValue = { ok: true, message: 'unliked post.' };
-      break;
-    case 400:
-      returnValue = {
-        ok: false,
-        message: 'this post has already been unliked.',
-        body: { isAlreadyUnliked: true },
-      };
-      break;
-    case 401:
-      returnValue = {
-        ok: false,
-        message: 'not authorised to perform this action.',
-      };
-      break;
-    case 403:
-      returnValue = { ok: false, message: 'can only like friends posts.' };
-      break;
-    case 404:
-      returnValue = { ok: false, message: 'no post found.' };
-      break;
-    case 500:
-      returnValue = { ok: false, message: 'unable to reach server.' };
-      break;
-    default:
-      returnValue = { ok: false, message: 'something went wrong.' };
-      break;
-  }
+	switch (response.status) {
+		case 200:
+			returnValue = { ok: true, message: 'unliked post.' };
+			break;
+		case 400:
+			returnValue = {
+				ok: false,
+				message: 'this post has already been unliked.',
+				body: { isAlreadyUnliked: true },
+			};
+			break;
+		case 401:
+			returnValue = {
+				ok: false,
+				message: 'not authorised to perform this action.',
+			};
+			break;
+		case 403:
+			returnValue = { ok: false, message: 'can only like friends posts.' };
+			break;
+		case 404:
+			returnValue = { ok: false, message: 'no post found.' };
+			break;
+		case 500:
+			returnValue = { ok: false, message: 'unable to reach server.' };
+			break;
+		default:
+			returnValue = { ok: false, message: 'something went wrong.' };
+			break;
+	}
 
-  return returnValue;
+	return returnValue;
 }

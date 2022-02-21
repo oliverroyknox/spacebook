@@ -4,5 +4,5 @@
  * @returns A capitalised string.
  */
 export default function capitalise(text) {
-  return text?.trim().replace(/^\w/, (c) => c.toUpperCase());
+	return text?.trim().replace(/^\w/, c => c.toUpperCase());
 }

@@ -4,7 +4,7 @@
  * @returns A URL representing the `Blob` data.
  */
 export async function toDataUrl(blob) {
-  return URL.createObjectURL(blob);
+	return URL.createObjectURL(blob);
 }
 
 /**
@@ -13,6 +13,6 @@ export async function toDataUrl(blob) {
  * @returns `Blob` data of image.
  */
 export async function fetchFromUri(uri) {
-  const response = await fetch(uri);
-  return response.blob();
+	const response = await fetch(uri);
+	return response.blob();
 }
