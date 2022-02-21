@@ -3,16 +3,11 @@ import PropTypes from 'prop-types';
 import { Card, TextInput, Button } from 'react-native-paper';
 import { Controller, useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { PostSchema } from '../schema';
 import PostStyles from '../styles/post';
 
-const schema = yup.object({ text: yup.string().required() });
-
 export default function PostEdit({ post, onSave }) {
-	const { control, handleSubmit, setValue, reset } = useForm({
-		defaultValues: { text: '' },
-		resolver: yupResolver(schema),
-	});
+	const { control, handleSubmit, setValue, reset } = useForm({ defaultValues: { text: '' }, resolver: yupResolver(PostSchema) });
 
 	useEffect(() => {
 		setValue('text', post.text);

@@ -5,30 +5,18 @@ import { Title, Caption, Button, useTheme } from 'react-native-paper';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { DetailsSchema } from '../schema';
 import capitalise from '../helpers/strings';
 import FormStyles from '../styles/form';
 import ErrorStyles from '../styles/error';
 import TextInput from './TextInput';
-
-const schema = yup
-	.object({
-		firstName: yup.string().required(),
-		lastName: yup.string().required(),
-	})
-	.required();
-
-const defaultValues = {
-	firstName: '',
-	lastName: '',
-};
 
 export default function SignupDetailsForm({ onSignup, onGoBack }) {
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({ defaultValues, resolver: yupResolver(schema) });
+	} = useForm({ defaultValues: { firstName: '', lastName: '' }, resolver: yupResolver(DetailsSchema) });
 
 	const theme = useTheme();
 

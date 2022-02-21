@@ -4,25 +4,13 @@ import { View } from 'react-native';
 import { Modal, Avatar, Caption, Button, FAB, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import * as ImagePicker from 'expo-image-picker';
+import { DetailsSchema } from '../schema';
 import capitalise from '../helpers/strings';
 import ErrorStyles from '../styles/error';
 import ProfileStyles from '../styles/profile';
 import Divider from './Divider';
 import TextInput from './TextInput';
-
-const schema = yup
-	.object({
-		firstName: yup.string().required(),
-		lastName: yup.string().required(),
-	})
-	.required();
-
-const defaultValues = {
-	firstName: '',
-	lastName: '',
-};
 
 export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, onSave }) {
 	const {
@@ -31,7 +19,7 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 		reset,
 		setValue,
 		formState: { errors },
-	} = useForm({ defaultValues, resolver: yupResolver(schema) });
+	} = useForm({ defaultValues: { firstName: '', lastName: '' }, resolver: yupResolver(DetailsSchema) });
 
 	const theme = useTheme();
 

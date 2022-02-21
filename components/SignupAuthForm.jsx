@@ -4,31 +4,19 @@ import { View } from 'react-native';
 import { Title, Caption, Paragraph, Button, useTheme } from 'react-native-paper';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { LoginSchema } from '../schema';
 import capitalise from '../helpers/strings';
 import FormStyles from '../styles/form';
 import ErrorStyles from '../styles/error';
 import LinkStyles from '../styles/link';
 import TextInput from './TextInput';
 
-const schema = yup
-	.object({
-		email: yup.string().email().required(),
-		password: yup.string().min(6).required(),
-	})
-	.required();
-
-const defaultValues = {
-	email: '',
-	password: '',
-};
-
 export default function SignupAuthForm({ onContinue, onLoginRedirect }) {
 	const {
 		control,
 		handleSubmit,
 		formState: { errors },
-	} = useForm({ defaultValues, resolver: yupResolver(schema) });
+	} = useForm({ defaultValues: { email: '', password: '' }, resolver: yupResolver(LoginSchema) });
 
 	const theme = useTheme();
 
