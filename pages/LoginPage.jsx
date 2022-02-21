@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { View } from 'react-native';
 import { Snackbar, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { login } from '../helpers/requests';
+import { login } from '../api/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import LoginForm from '../components/LoginForm';

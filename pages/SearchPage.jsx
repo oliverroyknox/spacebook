@@ -4,7 +4,7 @@ import { ScrollView, View } from 'react-native';
 import { Searchbar, Snackbar, List, useTheme, IconButton, Caption } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { searchUsers } from '../helpers/requests';
+import { searchUsers } from '../api/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import SearchStyles from '../styles/search';

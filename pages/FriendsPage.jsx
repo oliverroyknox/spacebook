@@ -4,7 +4,7 @@ import { View, ScrollView } from 'react-native';
 import { List, Snackbar, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getFriendRequests, getFriends, acceptFriendRequest, declineFriendRequest } from '../helpers/requests';
+import { getFriendRequests, getFriends, acceptFriendRequest, declineFriendRequest } from '../api/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import FriendRequest from '../components/FriendRequest';

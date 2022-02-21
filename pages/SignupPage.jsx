@@ -5,7 +5,7 @@ import { Snackbar, useTheme } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import capitalise from '../helpers/strings';
-import { login, signup } from '../helpers/requests';
+import { login, signup } from '../api/requests';
 import PageStyles from '../styles/page';
 import SwiperStyles from '../styles/swiper';
 import SignupAuthForm from '../components/SignupAuthForm';

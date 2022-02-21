@@ -5,7 +5,7 @@ import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { getUser } from './helpers/requests';
+import { getUser } from './api/requests';
 
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';

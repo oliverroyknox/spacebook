@@ -19,7 +19,7 @@ import {
 	uploadProfilePhoto,
 	getFriends,
 	addFriend,
-} from '../helpers/requests';
+} from '../api/requests';
 import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
