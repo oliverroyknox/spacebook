@@ -9,7 +9,7 @@ const styles = StyleSheet.create({
 	},
 });
 
-export default function PostDeleteDialog({ post, visible, onDismiss, onDelete }) {
+export default function PostDelete({ post, visible, onDismiss, onDelete }) {
 	const { colors } = useTheme();
 
 	return (
@@ -28,7 +28,7 @@ export default function PostDeleteDialog({ post, visible, onDismiss, onDelete })
 	);
 }
 
-PostDeleteDialog.propTypes = {
+PostDelete.propTypes = {
 	post: PropTypes.shape({
 		postId: PropTypes.number.isRequired,
 	}).isRequired,

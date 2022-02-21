@@ -24,12 +24,12 @@ import { toDataUrl, fetchFromUri } from '../helpers/blob';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
 import ProfileHero from '../components/ProfileHero';
-import ProfileEditModal from '../components/ProfileEditModal';
+import ProfileEdit from '../components/ProfileEdit';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
 import PostEdit from '../components/PostEdit';
-import PostDeleteDialog from '../components/PostDeleteDialog';
+import PostDelete from '../components/PostDelete';
 
 const styles = StyleSheet.create({
 	spacing: {
@@ -489,7 +489,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 				</View>
 			)}
 			<Portal>
-				{user && <ProfileEditModal profilePhoto={profilePhoto} user={user} visible={isProfileModalVisible} onDismiss={onDismissProfileModal} onSave={onSaveProfile} />}
+				{user && <ProfileEdit profilePhoto={profilePhoto} user={user} visible={isProfileModalVisible} onDismiss={onDismissProfileModal} onSave={onSaveProfile} />}
 			</Portal>
 			<Portal>
 				<Modal visible={isPostModalVisible} onDismiss={onDismissPostModal} contentContainerStyle={styles.modalContent}>
@@ -497,7 +497,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 					{editingPost && <PostEdit post={editingPost} onSave={onEditPost} />}
 				</Modal>
 			</Portal>
-			<Portal>{deletingPost && <PostDeleteDialog post={deletingPost} visible={isDialogVisible} onDismiss={onDismissDialog} onDelete={onDeletePost} />}</Portal>
+			<Portal>{deletingPost && <PostDelete post={deletingPost} visible={isDialogVisible} onDismiss={onDismissDialog} onDelete={onDeletePost} />}</Portal>
 			<Snackbar visible={isSnackbarVisible} onDismiss={onDismissSnackbar} duration={2000}>
 				{snackbarMessage}
 			</Snackbar>

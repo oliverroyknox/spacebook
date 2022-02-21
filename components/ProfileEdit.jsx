@@ -57,7 +57,7 @@ const styles = ({ colors }) =>
 		},
 	});
 
-export default function ProfileEditModal({ profilePhoto, user, visible, onDismiss, onSave }) {
+export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, onSave }) {
 	const {
 		control,
 		handleSubmit,
@@ -120,7 +120,7 @@ export default function ProfileEditModal({ profilePhoto, user, visible, onDismis
 	);
 }
 
-ProfileEditModal.propTypes = {
+ProfileEdit.propTypes = {
 	profilePhoto: PropTypes.string.isRequired,
 	user: PropTypes.shape({
 		firstName: PropTypes.string.isRequired,

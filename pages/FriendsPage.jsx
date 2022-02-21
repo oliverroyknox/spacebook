@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getFriendRequests, getFriends, acceptFriendRequest, declineFriendRequest } from '../helpers/requests';
 import capitalise from '../helpers/strings';
 import PageStyles from '../styles/page';
-import UserListItem from '../components/UserListItem';
+import User from '../components/User';
 
 const style = StyleSheet.create({
 	listIconWrapper: {
@@ -140,7 +140,7 @@ export default function FriendsPage({ navigation, setUserId }) {
 
 	function renderFriends() {
 		return friends.map(({ userId, userGivenname, userFamilyname }) => (
-			<UserListItem key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
+			<User key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
 		));
 	}
 

@@ -7,7 +7,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { searchUsers } from '../helpers/requests';
 import PageStyles from '../styles/page';
 import capitalise from '../helpers/strings';
-import UserListItem from '../components/UserListItem';
+import User from '../components/User';
 
 const styles = StyleSheet.create({
 	searchWrapper: {
@@ -147,7 +147,7 @@ export default function SearchPage({ navigation, setUserId }) {
 	 */
 	function renderUsers() {
 		return users.map(({ userId, userGivenname, userFamilyname }) => (
-			<UserListItem key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
+			<User key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
 		));
 	}
 
