@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from '@expo/vector-icons/Ionicons';
-import { DefaultTheme, Provider as PaperProvider } from 'react-native-paper';
+import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
+import Theme from './theme';
 import { getUser } from './api/requests';
 
 import AuthNavigator from './navigation/AuthNavigator';
@@ -15,20 +16,6 @@ import ContentNavigator from './navigation/ContentNavigator';
  */
 
 const renderIonicon = ({ name, color, size, direction }) => <Ionicons name={name} color={color} size={size} direction={direction} />;
-
-const Theme = {
-	...DefaultTheme,
-	colors: {
-		...DefaultTheme.colors,
-		primary: '#218FFF',
-		error: '#ff4646',
-		success: '#34c759',
-		page: '#fff',
-		divider: '#dcdcdc',
-		header: '#3d5f7d',
-		headerText: '#fff',
-	},
-};
 
 export default function App() {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
