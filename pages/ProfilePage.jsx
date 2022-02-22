@@ -74,20 +74,19 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	}
 
-	async function checkFriendship({ sessionToken, _signedInUserId }) {
+	async function checkFriendship({ sessionToken, friendOfId = signedInUserId }) {
 		// get logged in users friends.
 		const { ok, body: friends } = await getFriends({
-			userId: _signedInUserId,
+			userId: friendOfId,
 			sessionToken,
 		});
 
 		if (ok) {
 			// check if user being viewed in profile is a friend of the logged in user.
-			// eslint-disable-next-line no-underscore-dangle
-			const _isFriend = !!friends.find(({ userId: friendId }) => friendId === userId);
-			setIsFriend(_isFriend);
+			const profileIsFriend = !!friends.find(({ userId: friendId }) => friendId === userId);
+			setIsFriend(profileIsFriend);
 
-			return _isFriend;
+			return profileIsFriend;
 		}
 
 		setIsFriend(false);
@@ -336,15 +335,13 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		await loadUser({ sessionToken });
 		await loadProfilePhoto({ sessionToken });
 
-		// eslint-disable-next-line no-underscore-dangle
-		const _signedInUserId = Number(await AsyncStorage.getItem('user_id'));
-		setSignedInUserId(_signedInUserId);
+		const authUserId = Number(await AsyncStorage.getItem('user_id'));
+		setSignedInUserId(authUserId);
 
-		// eslint-disable-next-line no-underscore-dangle
-		const _isFriend = await checkFriendship({ sessionToken, _signedInUserId });
+		const profileIsFriend = await checkFriendship({ sessionToken, isFriendOf: authUserId });
 
 		// only load posts of friends or self.
-		if (_isFriend || userId === _signedInUserId) {
+		if (profileIsFriend || userId === authUserId) {
 			await loadPosts({ sessionToken });
 		} else {
 			setPosts([]);
