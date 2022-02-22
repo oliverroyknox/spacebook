@@ -10,6 +10,7 @@ export default function PostEdit({ post, onSave }) {
 	const { control, handleSubmit, setValue, reset } = useForm({ defaultValues: { text: '' }, resolver: yupResolver(PostSchema) });
 
 	const onSaveWithReset = data => {
+		// reset fields in form before callback.
 		reset();
 		onSave({ ...post, ...data });
 	};

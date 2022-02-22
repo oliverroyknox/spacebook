@@ -9,11 +9,8 @@ import PostStyles from '../styles/post';
 export default function PostCompose({ onPost }) {
 	const { control, handleSubmit, reset } = useForm({ defaultValues: { text: '' }, resolver: yupResolver(PostSchema) });
 
-	/**
-	 * Handle resetting form before `onPost` callback.
-	 * @param {Object} data Form data.
-	 */
 	const onPostWithReset = data => {
+		// reset fields in form before callback.
 		reset();
 		onPost(data);
 	};

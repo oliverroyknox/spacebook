@@ -22,36 +22,20 @@ export default function SignupPage({ navigation, onAuthenticate }) {
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
-	/**
-	 * Synchronises state when `Snackbar` is dismissed.
-	 */
 	const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
-	/**
-	 * Handle redirect to `Login` page.
-	 */
 	const onLoginRedirect = () => navigation.navigate('Login');
 
-	/**
-	 * Shows a `Snackbar` with the given message.
-	 * @param {string} message Message to display in `Snackbar`.
-	 */
 	function showSnackbar(message) {
 		setSnackbarMessage(capitalise(message));
 		return setIsSnackbarVisible(true);
 	}
 
-	/**
-	 * Scroll swiper back to previous index.
-	 */
 	const onScrollToPrev = () => {
 		const index = swiperRef.current.getPrevIndex();
 		swiperRef.current.scrollToIndex({ index });
 	};
 
-	/**
-	 * Handle partial form submission before navigating to next slide.
-	 */
 	const onContinue = ({ email, password }) => {
 		tempData.email = email;
 		tempData.password = password;
@@ -59,13 +43,6 @@ export default function SignupPage({ navigation, onAuthenticate }) {
 		swiperRef.current.scrollToIndex({ index: 1 });
 	};
 
-	/**
-	 * Handle complete form submission to signup a new user account,
-	 * and automatically logs them in on successs.
-	 * @param {Object} data Form data.
-	 * @param {string} data.firstName First name of user.
-	 * @param {string} data.lastName Last name of user.
-	 */
 	const onSignup = async ({ firstName, lastName }) => {
 		const { email, password } = tempData;
 
@@ -79,6 +56,7 @@ export default function SignupPage({ navigation, onAuthenticate }) {
 			if (signupResponse.ok) {
 				showSnackbar(capitalise(signupResponse.message));
 
+				// if signup is successful, then automatically log in the user.
 				const loginResponse = await login({ email, password });
 				if (loginResponse.ok) {
 					return onAuthenticate({
@@ -87,7 +65,7 @@ export default function SignupPage({ navigation, onAuthenticate }) {
 					});
 				}
 
-				// Fallback to login screen if problem with automatic login request.
+				// fallback to login screen if problem with automatic login request.
 				return navigation.goBack();
 			}
 			return showSnackbar(signupResponse.message);

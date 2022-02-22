@@ -50,11 +50,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 
-	/**
-	 * Gets the specified user's information.
-	 * @param {Object} userData Requested user data to get another user.
-	 * @param {string} userData.sessionToken Logged in user's authorisation token.
-	 */
 	async function loadUser({ sessionToken }) {
 		const { ok, body } = await getUser({ userId, sessionToken });
 
@@ -63,11 +58,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	}
 
-	/**
-	 * Gets the user's profile photo and set it's data URL to state.
-	 * @param {Object} userData Required user data to get profile photo.
-	 * @param {string} userData.sessionToken Logged in user's authorisation token.
-	 */
 	async function loadProfilePhoto({ sessionToken }) {
 		const { ok, body } = await getProfilePhoto({ userId, sessionToken });
 
@@ -76,11 +66,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	}
 
-	/**
-	 * Gets the posts on the user's profile.
-	 * @param {Object} userData Requested user data to get another user.
-	 * @param {string} userData.sessionToken Logged in user's authorisation token.
-	 */
 	async function loadPosts({ sessionToken }) {
 		const { ok, body } = await getPosts({ userId, sessionToken });
 
@@ -89,18 +74,15 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	}
 
-	/**
-	 * Checks whether the currently signed in user is friends with the profile's user.
-	 * @param {Object} userData requested user data to get another user.
-	 * @param {string} userData.sessionToken Logged in user's authorisation token.
-	 */
 	async function checkFriendship({ sessionToken, _signedInUserId }) {
+		// get logged in users friends.
 		const { ok, body: friends } = await getFriends({
 			userId: _signedInUserId,
 			sessionToken,
 		});
 
 		if (ok) {
+			// check if user being viewed in profile is a friend of the logged in user.
 			// eslint-disable-next-line no-underscore-dangle
 			const _isFriend = !!friends.find(({ userId: friendId }) => friendId === userId);
 			setIsFriend(_isFriend);
@@ -112,50 +94,30 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		return false;
 	}
 
-	/**
-	 * Synchronises state when `PostDeleteDialog` is dismissed.
-	 */
 	const onDismissDialog = () => {
 		setIsDialogVisible(false);
 
+		// reset delete post dialog when dismissing dialog.
 		if (deletingPost) setDeletingPost(null);
 	};
 
-	/**
-	 * Synchronises state when `ProfileEditModal` is dismissed.
-	 */
 	const onDismissProfileModal = () => setIsProfileModalVisible(false);
 
-	/**
-	 * Synchronises state when `Modal` is dismissed.
-	 */
 	const onDismissPostModal = () => {
 		setIsPostModalVisible(false);
 
+		// reset focus post or editing post when dismissing modal.
 		if (focusedPost) setFocusedPost(null);
 		if (editingPost) setEditingPost(null);
 	};
 
-	/**
-	 * Synchronises state when `Snackbar` is dismissed.
-	 */
 	const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
-	/**
-	 * Shows a `Snackbar` with the given message.
-	 * @param {string} message Message to display in `Snackbar`.
-	 */
 	function showSnackbar(message) {
 		setSnackbarMessage(capitalise(message));
 		return setIsSnackbarVisible(true);
 	}
 
-	/**
-	 * Shows a `Modal` to display a post.
-	 * @param {Object} data Callback data.
-	 * @param {Object} data.post A focused post to show in the `Modal`.
-	 * @param {number} data.post.postId The ID of the focused post.
-	 */
 	const onShowPostModal = async ({ post: { postId } }) => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
@@ -172,45 +134,24 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Shows a `Modal` with a post ready to be edited.
-	 * @param {Object} data Callback data.
-	 * @param {Object} data.post A post to be edited.
-	 */
 	const onShowEditPostModal = ({ post }) => {
-		// Cleanup any existing `Modals` before loading this one.
-		// As this `Modal` can be triggered from another.
+		// cleanup any existing modals before loading this one, as this modal can be triggered from another.
 		onDismissPostModal();
 
 		setEditingPost(post);
 		setIsPostModalVisible(true);
 	};
 
-	/**
-	 * Shows the `PostDeleteDialog` to confirm deletion.
-	 * @param {Object} data Callback data.
-	 * @param {Object} data.post The post to target for deletion.
-	 */
 	const onShowDeleteDialog = ({ post }) => {
-		// Cleanup any existing `Modals` before loading this one.
-		// As this `Modal` can be triggered from another.
+		// cleanup any existing dialogs before loading this one, as this dialog can be triggered from another.
 		onDismissPostModal();
 
 		setIsDialogVisible(true);
 		setDeletingPost(post);
 	};
 
-	/**
-	 * Handles starting a session to edit a profile.
-	 */
 	const onEditProfile = () => setIsProfileModalVisible(true);
 
-	/**
-	 * Handles saving changes to a profile.
-	 * @param {Object} data Callback data.
-	 * @param {string} data.firstName First name of user.
-	 * @param {string} data.lastName Last name of user.
-	 */
 	const onSaveProfile = async ({ firstName, lastName, profilePhoto: photo }) => {
 		onDismissProfileModal();
 
@@ -224,11 +165,13 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 			});
 
 			if (updateUserResponse.ok) {
+				// when user update succeeds update post and user state (as they contain user details).
 				await loadPosts({ sessionToken });
 				await loadUser({ sessionToken });
 
 				if (!photo) return null;
 
+				// then attempt to update profile photo.
 				const blob = await fetchFromUri(photo);
 				const uploadPhotoResponse = await uploadProfilePhoto({
 					userId,
@@ -249,9 +192,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles logging out the current user and returning to `login` screen.
-	 */
 	const onLogout = async () => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
@@ -267,9 +207,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles going back to the "home" profile page.
-	 */
 	const onGoToHome = async () => setUserId(signedInUserId);
 
 	const onAddFriend = async () => {
@@ -283,17 +220,12 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles creating a new post in the system.
-	 * @param {Object} data Post data.
-	 * @param {string} text Text content of a post.
-	 */
 	const onPost = async ({ text }) => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
 			const response = await createPost({ userId, sessionToken, text });
 
-			// Reload state with new post.
+			// reload state with new post.
 			await loadPosts({ sessionToken });
 
 			return showSnackbar(response.message);
@@ -302,19 +234,14 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles liking and unliking a post.
-	 * @param {Object} data Data from callback.
-	 * @param {Object} post Post that was liked.
-	 * @param {number} post.postId ID of post that was liked.
-	 */
 	const onLikePost = async ({ post: { postId } }) => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
 			const likeResponse = await likePost({ userId, postId, sessionToken });
 
+			// attempt to like post, if fails with condition below then it is already liked and needs to be unliked instead.
 			if (!likeResponse.ok && likeResponse.body?.isAlreadyLiked === true) {
-				// If already liked then try an unlike post.
+				// if already liked then try an unlike post.
 				const unlikeResponse = await unlikePost({
 					userId,
 					postId,
@@ -334,14 +261,8 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles saving the changes made from an edit post interaction.
-	 * @param {Object} data Data from callback.
-	 * @param {string} data.text New text of post to update.
-	 */
 	const onEditPost = async ({ postId, text }) => {
-		// Cleanup any existing `Modals` before loading this one.
-		// As this `Modal` can be triggered from another.
+		// cleanup any existing modals before loading this one, as this modal can be triggered from another.
 		onDismissPostModal();
 
 		try {
@@ -363,11 +284,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Handles deleting a post.
-	 * @param {Object} data Data from callback.
-	 * @param {number} data.postId ID of post to delete.
-	 */
 	const onDeletePost = async ({ postId }) => {
 		onDismissDialog();
 
@@ -385,9 +301,6 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		}
 	};
 
-	/**
-	 * Conditionally render a `Post` component.
-	 */
 	const renderPost = ({ item: post }, options) => {
 		const isLikeable = userId !== signedInUserId && post.author.userId !== signedInUserId;
 		const isOwn = post.author.userId === signedInUserId;
@@ -396,24 +309,25 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 		const style = !isFocused && PostStyles.postWrapper;
 
 		function renderCard() {
-			// According to API spec.
-			// If Post is authored by the currently signed in user it cannot be liked,
+			// according to api spec.
+			// if post is authored by the currently signed in user it cannot be liked,
 			// but can be edited / deleted.
 			if (isOwn) {
 				return <Post post={post} onEdit={onShowEditPostModal} onDelete={onShowDeleteDialog} onPress={onShowPostModal} isFocused={isFocused} />;
 			}
 
-			// According to API spec.
-			// If Post is by a different user and not on the currently signed in user's profile,
+			// according to api spec.
+			// if post is by a different user and not on the currently signed in user's profile,
 			// it can be liked.
 			if (isLikeable) {
 				return <Post post={post} onLike={onLikePost} onPress={onShowPostModal} isFocused={isFocused} />;
 			}
 
-			// Fallback post to render "something", if above conditions fail to meet requirements.
+			// fallback post to render "something", if above conditions fail to meet requirements.
 			return <Post post={post} onPress={onShowPostModal} isFocused={isFocused} />;
 		}
 
+		// wrap post in a styled view.
 		return <View style={style}>{renderCard()}</View>;
 	};
 

@@ -13,6 +13,7 @@ function renderTabBarIcon(route, options) {
 	const { name } = route;
 	const { size, color } = options;
 
+	// render different tab bar icon based on route path.
 	let icon = '';
 	switch (name) {
 		case 'Profile':

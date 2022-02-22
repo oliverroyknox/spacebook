@@ -15,31 +15,14 @@ export default function LoginPage({ navigation, onAuthenticate }) {
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
-	/**
-	 * Synchronises state when `Snackbar` is dismissed.
-	 */
 	const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
-	/**
-	 * Handle redirect to `Signup` page.
-	 */
 	const onSignupRedirect = () => navigation.navigate('Signup');
 
-	/**
-	 * Shows a `Snackbar` with the given message.
-	 * @param {string} message Message to display in `Snackbar`.
-	 */
 	function showSnackbar(message) {
 		setSnackbarMessage(capitalise(message));
 		return setIsSnackbarVisible(true);
 	}
-
-	/**
-	 * Handle form submission by logging in a user account and authenticating in the system.
-	 * @param {Object} data Form data.
-	 * @param {string} data.email Email for user's account.
-	 * @param {string} data.password Password for user's account.
-	 */
 	const onLogin = async ({ email, password }) => {
 		try {
 			const response = await login({ email, password });

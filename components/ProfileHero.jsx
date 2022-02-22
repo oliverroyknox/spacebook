@@ -12,11 +12,8 @@ export default function ProfileHero({ profilePhoto, user, isNested, onEdit, onLo
 	const openMenu = () => setIsMenuVisible(true);
 	const closeMenu = () => setIsMenuVisible(false);
 
-	/**
-	 * Wrapper for a callback on `Menu.Item` press. Closes the `Menu` before running callback.
-	 * @param {Function} callback Callback to run on menu press.
-	 */
 	const handleMenuPress = callback => {
+		// enforce menu is closed before callback.
 		closeMenu();
 		callback();
 	};

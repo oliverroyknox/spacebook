@@ -19,18 +19,11 @@ export default function FriendsPage({ navigation, setUserId }) {
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
-	/**
-	 * Shows a `Snackbar` with the given message.
-	 * @param {string} message Message to display in `Snackbar`.
-	 */
 	function showSnackbar(message) {
 		setSnackbarMessage(capitalise(message));
 		return setIsSnackbarVisible(true);
 	}
 
-	/**
-	 * Synchronises state when `Snackbar` is dismissed.
-	 */
 	const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
 	async function loadFriendRequests() {
@@ -43,9 +36,6 @@ export default function FriendsPage({ navigation, setUserId }) {
 		}
 	}
 
-	/**
-	 * Load all friends of the current user.
-	 */
 	async function loadFriends() {
 		const userId = Number(await AsyncStorage.getItem('user_id'));
 		const sessionToken = await AsyncStorage.getItem('session_token');
@@ -57,17 +47,13 @@ export default function FriendsPage({ navigation, setUserId }) {
 		}
 	}
 
-	/**
-	 * Accept a friend request.
-	 * @param {Object} request Request data.
-	 * @param {number} userId ID of user's friend request to accept.
-	 */
 	const onAcceptFriendRequest = async ({ userId }) => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
 			const response = await acceptFriendRequest({ userId, sessionToken });
 
 			if (response.ok) {
+				// sync friends and friend requests state with server.
 				await loadFriendRequests();
 				await loadFriends();
 				return showSnackbar('accepted friend request.');
@@ -79,17 +65,13 @@ export default function FriendsPage({ navigation, setUserId }) {
 		}
 	};
 
-	/**
-	 * Decline a friend request.
-	 * @param {Object} request Request data.
-	 * @param {number} userId ID of user's friend request to decline.
-	 */
 	const onDeclineFriendRequest = async ({ userId }) => {
 		try {
 			const sessionToken = await AsyncStorage.getItem('session_token');
 			const response = await declineFriendRequest({ userId, sessionToken });
 
 			if (response.ok) {
+				// sync friends and friend requests state with server.
 				await loadFriendRequests();
 				await loadFriends();
 				return showSnackbar('declined friend request.');
@@ -101,11 +83,6 @@ export default function FriendsPage({ navigation, setUserId }) {
 		}
 	};
 
-	/**
-	 * Navigates to the current user's profile.
-	 * @param {Object} data User data.
-	 * @param {number} data.userId ID of user to navigate to.
-	 */
 	const onGoToUser = ({ userId }) => {
 		setUserId(userId);
 		navigation.navigate('Profile');

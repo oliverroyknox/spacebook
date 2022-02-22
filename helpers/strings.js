@@ -1,8 +1,4 @@
-/**
- * Capitalises the first letter in a given string.
- * @param {string} text String to capitalise.
- * @returns A capitalised string.
- */
 export default function capitalise(text) {
+	// capitalises the first letter of the input text.
 	return text?.trim().replace(/^\w/, c => c.toUpperCase());
 }

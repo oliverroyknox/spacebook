@@ -1,13 +1,6 @@
 import camelcase from 'camelcase-keys';
 import url from './utils';
 
-/**
- * Log a user account in.
- * @param {Object} request Request data.
- * @param {string} request.email Email of user account.
- * @param {string} request.password Password for user account.
- * @returns A parsed response object.
- */
 export async function login({ email, password }) {
 	const response = await fetch(url('login'), {
 		method: 'POST',
@@ -41,15 +34,6 @@ export async function login({ email, password }) {
 	return returnValue;
 }
 
-/**
- * Signs up a new user account.
- * @param {Object} request Request data.
- * @param {string} request.email Email of user account.
- * @param {string} request.password Password of user account.
- * @param {string} request.firstName First name of user.
- * @param {string} request.lastName Last name of user.
- * @returns A parsed response object.
- */
 export async function signup({ email, password, firstName, lastName }) {
 	const response = await fetch(url('user'), {
 		method: 'POST',
@@ -88,12 +72,6 @@ export async function signup({ email, password, firstName, lastName }) {
 	return returnValue;
 }
 
-/**
- * Logs out the current user.
- * @param {Object} request Request data.
- * @param {string} request.sessionToken Authorisation token from logged in user.
- * @returns A parsed response object.
- */
 export async function logout({ sessionToken }) {
 	const response = await fetch(url('logout'), {
 		method: 'POST',
@@ -125,13 +103,6 @@ export async function logout({ sessionToken }) {
 	return returnValue;
 }
 
-/**
- * Get user data.
- * @param {Object} request Request data.
- * @param {number} userId ID of user to get.
- * @param {string} sessionToken Authorisation token from logged in user.
- * @returns A parsed response object.
- */
 export async function getUser({ userId, sessionToken }) {
 	const response = await fetch(url(`user/${userId}`), {
 		headers: {
@@ -169,14 +140,6 @@ export async function getUser({ userId, sessionToken }) {
 	return returnValue;
 }
 
-/**
- * Update a user's data.
- * @param {Object} request Request data.
- * @param {number} userId ID of user to update.
- * @param {string} sessionToken Authorisation token from logged in user.
- * @param {Object} user Data fields of user to update.
- * @returns A parsed response object.
- */
 export async function updateUser({ userId, sessionToken, user: { firstName, lastName } }) {
 	const response = await fetch(url(`user/${userId}`), {
 		method: 'PATCH',
@@ -222,13 +185,6 @@ export async function updateUser({ userId, sessionToken, user: { firstName, last
 	return returnValue;
 }
 
-/**
- * Get profile photo of user.
- * @param {Object} request Request data.
- * @param {number} request.userId ID of user to get profile photo of.
- * @param {string} request.sessionToken Authorisation token from logged in user.
- * @returns A parsed response object.
- */
 export async function getProfilePhoto({ userId, sessionToken }) {
 	const response = await fetch(url(`user/${userId}/photo`), {
 		headers: {
@@ -266,14 +222,6 @@ export async function getProfilePhoto({ userId, sessionToken }) {
 	return returnValue;
 }
 
-/**
- * Upload a profile photo for the user.
- * @param {Object} request Request data.
- * @param {number} request.userId ID of user to upload profile photo for.
- * @param {string} request.sessionToken Authorisation token from logged in user.
- * @param {Blob} request.photo Blob data of photo to upload.
- * @returns A parsed response object.
- */
 export async function uploadProfilePhoto({ userId, sessionToken, photo }) {
 	const response = await fetch(url(`user/${userId}/photo`), {
 		method: 'POST',

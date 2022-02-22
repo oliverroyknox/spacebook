@@ -26,8 +26,10 @@ export default function ProfileEdit({ profilePhoto, user, visible, onDismiss, on
 	const [stagedPhoto, setStagedPhoto] = useState('');
 
 	const onSaveWithReset = data => {
+		// reset forms in field before callback.
 		reset();
 		onSave({ ...user, ...data, profilePhoto: stagedPhoto });
+		// reset staged avatar.
 		setStagedPhoto('');
 	};
 

@@ -9,27 +9,19 @@ import { getUser } from './api/requests';
 import AuthNavigator from './navigation/AuthNavigator';
 import ContentNavigator from './navigation/ContentNavigator';
 
-/**
- * @typedef {import("@react-navigation/native").ParamListBase} ParamListBase
- * @typedef {import("@react-navigation/native").RouteProp} RouteProp
- * @typedef {import("@react-navigation/bottom-tabs").BottomTabNavigationOptions} NavigationOptions
- */
-
 const renderIonicon = ({ name, color, size, direction }) => <Ionicons name={name} color={color} size={size} direction={direction} />;
 
 export default function App() {
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [currentUserId, setCurrentUserId] = useState(-1);
 
-	/**
-	 * Loads saved user login credentials to skip sign in process.
-	 */
 	const loadSavedCredentials = async () => {
 		try {
 			const userId = Number(await AsyncStorage.getItem('user_id'));
 			const sessionToken = await AsyncStorage.getItem('session_token');
 
 			if (userId && sessionToken) {
+				// check if saved credentials are valid, if so then update the authentication state.
 				const { ok } = await getUser({ userId, sessionToken });
 				if (!ok) return;
 
@@ -42,12 +34,6 @@ export default function App() {
 		}
 	};
 
-	/**
-	 * Callback to set `isAuthenticated` state and update persistent storage.
-	 * @param {Object} userData Authenticated user's data.
-	 * @param {number} userId ID of the authenticated user.
-	 * @param {string} sessionToken Token granted on successful authentication.
-	 */
 	const onAuthenticate = async ({ userId, sessionToken }) => {
 		try {
 			await AsyncStorage.setItem('user_id', String(userId));
@@ -60,9 +46,6 @@ export default function App() {
 		}
 	};
 
-	/**
-	 * Callback to set `isAuthenticated` state. Performs the inverse of `onAuthenticate`.
-	 */
 	const onUnauthenticate = async () => {
 		await AsyncStorage.removeItem('user_id');
 		await AsyncStorage.removeItem('session_token');

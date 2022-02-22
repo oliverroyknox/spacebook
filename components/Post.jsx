@@ -13,14 +13,12 @@ export default function Post({ post, onLike, onPress, onEdit, onDelete, isFocuse
 	const closeMenu = () => setIsMenuVisible(false);
 
 	function formatDate(unix) {
+		// create a user friendly date string from timestamp.
 		return new Date(unix).toLocaleString('en-GB');
 	}
 
-	/**
-	 * Wrapper for a callback on `Menu.Item` press. Closes the `Menu` before running callback.
-	 * @param {Function} callback Callback to run on menu item press.
-	 */
 	const handleMenuPress = callback => {
+		// enforce menu is closed before performing callback.
 		closeMenu();
 		callback({ post });
 	};

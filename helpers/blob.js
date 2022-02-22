@@ -1,18 +1,10 @@
-/**
- * Create a data URL from `Blob`.
- * @param {Blob} blob `Blob` data object.
- * @returns A URL representing the `Blob` data.
- */
 export async function toDataUrl(blob) {
+	// create a data url from blob.
 	return URL.createObjectURL(blob);
 }
 
-/**
- * Fetch an image `Blob` from a URI.
- * @param {string} uri URI of image.
- * @returns `Blob` data of image.
- */
 export async function fetchFromUri(uri) {
+	// gets blob data from image uri.
 	const response = await fetch(uri);
 	return response.blob();
 }

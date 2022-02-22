@@ -26,10 +26,8 @@ export default function SearchPage({ navigation, setUserId }) {
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
-	/**
-	 * Check if there is a next page.
-	 */
 	async function checkNextPage() {
+		// request the next page before needed to check there are some results and set state accordingly.
 		const sessionToken = await AsyncStorage.getItem('session_token');
 		const response = await searchUsers({
 			sessionToken,
@@ -45,16 +43,11 @@ export default function SearchPage({ navigation, setUserId }) {
 		}
 	}
 
-	/**
-	 * Check if there is a previous page.
-	 */
 	async function checkPrevPage() {
+		// lowest possible page is 0.
 		setHasPagePrev(pageNum > 0);
 	}
 
-	/**
-	 * Load next page.
-	 */
 	const nextPage = async () => {
 		if (hasPageNext && !isLoadingPage) {
 			setPageNum(pageNum + 1);
@@ -62,9 +55,6 @@ export default function SearchPage({ navigation, setUserId }) {
 		}
 	};
 
-	/**
-	 * Load previous page.
-	 */
 	const prevPage = async () => {
 		if (hasPagePrev && !isLoadingPage) {
 			setPageNum(pageNum - 1);
@@ -72,24 +62,13 @@ export default function SearchPage({ navigation, setUserId }) {
 		}
 	};
 
-	/**
-	 * Shows a `Snackbar` with the given message.
-	 * @param {string} message Message to display in `Snackbar`.
-	 */
 	function showSnackbar(message) {
 		setSnackbarMessage(capitalise(message));
 		return setIsSnackbarVisible(true);
 	}
 
-	/**
-	 * Synchronises state when `Snackbar` is dismissed.
-	 */
 	const onDismissSnackbar = () => setIsSnackbarVisible(false);
 
-	/**
-	 * Handles searching for users from query string.
-	 * @param {string} query Query to use in search.
-	 */
 	const onSearch = async query => {
 		const sessionToken = await AsyncStorage.getItem('session_token');
 		const response = await searchUsers({
@@ -100,6 +79,7 @@ export default function SearchPage({ navigation, setUserId }) {
 		});
 
 		if (response.ok) {
+			// after loading new page, re-check pagination state.
 			await checkNextPage();
 			await checkPrevPage();
 
@@ -109,29 +89,16 @@ export default function SearchPage({ navigation, setUserId }) {
 		return showSnackbar(response.message);
 	};
 
-	/**
-	 * Handles updating the search query state and performing a search.
-	 * @param {string} query Query to use in search.
-	 */
 	const onSearchChange = async query => {
 		setSearchQuery(query);
 		await onSearch(query);
 	};
 
-	/**
-	 * Navigates to the current user's profile.
-	 * @param {Object} data User data.
-	 * @param {number} data.userId ID of user to navigate to.
-	 */
 	const onGoToUser = ({ userId }) => {
 		setUserId(userId);
 		navigation.navigate('Profile');
 	};
 
-	/**
-	 * Renders a list of user items.
-	 * @returns A list of `List.Item` representing users.
-	 */
 	function renderUsers() {
 		return users.map(({ userId, userGivenname, userFamilyname }) => (
 			<User key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
@@ -143,6 +110,7 @@ export default function SearchPage({ navigation, setUserId }) {
 	}, []);
 
 	useEffect(async () => {
+		// when page number changes, perform a new search to load results on new page.
 		await onSearch(searchQuery);
 		setTimeout(() => setIsLoadingPage(false), 300);
 	}, [pageNum]);
