@@ -10,8 +10,7 @@ import PageStyles from '../styles/page';
 import SearchStyles from '../styles/search';
 import PaginationStyles from '../styles/pagination';
 import User from '../components/User';
-
-const LIMIT = 10;
+import LimitPicker from '../components/LimitPicker';
 
 export default function SearchPage({ navigation, setUserId }) {
 	const theme = useTheme();
@@ -23,6 +22,7 @@ export default function SearchPage({ navigation, setUserId }) {
 	const [hasPagePrev, setHasPagePrev] = useState(false);
 	const [hasPageNext, setHasPageNext] = useState(false);
 	const [users, setUsers] = useState([]);
+	const [limit, setLimit] = useState(5);
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -32,8 +32,8 @@ export default function SearchPage({ navigation, setUserId }) {
 		const response = await searchUsers({
 			sessionToken,
 			query: searchQuery,
-			offset: LIMIT * (pageNum + 1),
-			limit: LIMIT,
+			offset: limit * (pageNum + 1),
+			limit: limit,
 		});
 
 		if (response.ok) {
@@ -74,8 +74,8 @@ export default function SearchPage({ navigation, setUserId }) {
 		const response = await searchUsers({
 			sessionToken,
 			query,
-			offset: LIMIT * pageNum,
-			limit: LIMIT,
+			offset: limit * pageNum,
+			limit: limit,
 		});
 
 		if (response.ok) {
@@ -99,6 +99,11 @@ export default function SearchPage({ navigation, setUserId }) {
 		navigation.navigate('Profile');
 	};
 
+	const onLimitChange = value => {
+		setLimit(Number(value));
+		setPageNum(0);
+	};
+
 	function renderUsers() {
 		return users.map(({ userId, userGivenname, userFamilyname }) => (
 			<User key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
@@ -115,6 +120,10 @@ export default function SearchPage({ navigation, setUserId }) {
 		setTimeout(() => setIsLoadingPage(false), 300);
 	}, [pageNum]);
 
+	useEffect(async () => {
+		await onSearch(searchQuery);
+	}, [limit]);
+
 	return (
 		<View style={PageStyles(theme, insets).page}>
 			<ScrollView>
@@ -125,6 +134,13 @@ export default function SearchPage({ navigation, setUserId }) {
 					<IconButton icon="arrow-back-circle" color={theme.colors.primary} disabled={!hasPagePrev} onPress={prevPage} />
 					<Caption>Page {pageNum + 1}</Caption>
 					<IconButton icon="arrow-forward-circle" color={theme.colors.primary} disabled={!hasPageNext} onPress={nextPage} />
+				</View>
+				<View style={PaginationStyles.settingsWrapper}>
+					<View style={PaginationStyles.setting} />
+					<View style={PaginationStyles.setting}>
+						<Caption>Results Per Page</Caption>
+						<LimitPicker value={limit} onChange={onLimitChange} />
+					</View>
 				</View>
 				<List.Section>
 					<List.Subheader>Suggestions</List.Subheader>

@@ -10,6 +10,15 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 		alignItems: 'center',
 	},
+	settingsWrapper: {
+		flex: 1,
+		flexDirection: 'row',
+		paddingHorizontal: 16,
+	},
+	setting: {
+		flex: 1,
+		marginHorizontal: 8,
+	},
 });
 
 export default styles;
