@@ -11,6 +11,7 @@ import SearchStyles from '../styles/search';
 import PaginationStyles from '../styles/pagination';
 import User from '../components/User';
 import LimitPicker from '../components/LimitPicker';
+import SearchInPicker from '../components/SearchInPicker';
 
 export default function SearchPage({ navigation, setUserId }) {
 	const theme = useTheme();
@@ -23,6 +24,7 @@ export default function SearchPage({ navigation, setUserId }) {
 	const [hasPageNext, setHasPageNext] = useState(false);
 	const [users, setUsers] = useState([]);
 	const [limit, setLimit] = useState(5);
+	const [searchIn, setSearchIn] = useState('all');
 	const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
 	const [snackbarMessage, setSnackbarMessage] = useState('');
 
@@ -34,6 +36,7 @@ export default function SearchPage({ navigation, setUserId }) {
 			query: searchQuery,
 			offset: limit * (pageNum + 1),
 			limit: limit,
+			searchIn: searchIn,
 		});
 
 		if (response.ok) {
@@ -76,6 +79,7 @@ export default function SearchPage({ navigation, setUserId }) {
 			query,
 			offset: limit * pageNum,
 			limit: limit,
+			searchIn: searchIn,
 		});
 
 		if (response.ok) {
@@ -104,6 +108,11 @@ export default function SearchPage({ navigation, setUserId }) {
 		setPageNum(0);
 	};
 
+	const onSearchInChange = value => {
+		setSearchIn(value);
+		setPageNum(0);
+	};
+
 	function renderUsers() {
 		return users.map(({ userId, userGivenname, userFamilyname }) => (
 			<User key={userId} userId={userId} firstName={userGivenname} lastName={userFamilyname} onGoToUser={onGoToUser} />
@@ -120,9 +129,7 @@ export default function SearchPage({ navigation, setUserId }) {
 		setTimeout(() => setIsLoadingPage(false), 300);
 	}, [pageNum]);
 
-	useEffect(async () => {
-		await onSearch(searchQuery);
-	}, [limit]);
+	useEffect(async () => onSearch(searchQuery), [limit, searchIn]);
 
 	return (
 		<View style={PageStyles(theme, insets).page}>
@@ -136,7 +143,10 @@ export default function SearchPage({ navigation, setUserId }) {
 					<IconButton icon="arrow-forward-circle" color={theme.colors.primary} disabled={!hasPageNext} onPress={nextPage} />
 				</View>
 				<View style={PaginationStyles.settingsWrapper}>
-					<View style={PaginationStyles.setting} />
+					<View style={PaginationStyles.setting}>
+						<Caption>Search In</Caption>
+						<SearchInPicker value={searchIn} onChange={onSearchInChange} />
+					</View>
 					<View style={PaginationStyles.setting}>
 						<Caption>Results Per Page</Caption>
 						<LimitPicker value={limit} onChange={onLimitChange} />
