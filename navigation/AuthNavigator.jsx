@@ -10,31 +10,35 @@ import SignupPage from '../pages/SignupPage';
 const Stack = createNativeStackNavigator();
 
 export default function AuthNavigator({ onAuthenticate }) {
-	const { colors } = useTheme();
+  const { colors } = useTheme();
 
-	const screenOptions = {
-		headerTitle: LogoHeader,
-		headerLeft: () => null,
-		headerStyle: { backgroundColor: colors.header },
-		headerTintColor: colors.headerText,
-	};
+  const screenOptions = {
+    headerTitle: LogoHeader,
+    headerLeft: () => null,
+    headerStyle: { backgroundColor: colors.header },
+    headerTintColor: colors.headerText,
+  };
 
-	const renderLoginPage = ({ navigation }) => <LoginPage navigation={navigation} onAuthenticate={onAuthenticate} />;
+  const renderLoginPage = ({ navigation }) => (
+    <LoginPage navigation={navigation} onAuthenticate={onAuthenticate} />
+  );
 
-	const renderSignupPage = ({ navigation }) => <SignupPage navigation={navigation} onAuthenticate={onAuthenticate} />;
+  const renderSignupPage = ({ navigation }) => (
+    <SignupPage navigation={navigation} onAuthenticate={onAuthenticate} />
+  );
 
-	return (
-		<Stack.Navigator>
-			<Stack.Screen name="Login" options={screenOptions}>
-				{renderLoginPage}
-			</Stack.Screen>
-			<Stack.Screen name="Signup" options={screenOptions}>
-				{renderSignupPage}
-			</Stack.Screen>
-		</Stack.Navigator>
-	);
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Login" options={screenOptions}>
+        {renderLoginPage}
+      </Stack.Screen>
+      <Stack.Screen name="Signup" options={screenOptions}>
+        {renderSignupPage}
+      </Stack.Screen>
+    </Stack.Navigator>
+  );
 }
 
 AuthNavigator.propTypes = {
-	onAuthenticate: PropTypes.func.isRequired,
+  onAuthenticate: PropTypes.func.isRequired,
 };

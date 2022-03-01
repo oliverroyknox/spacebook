@@ -12,44 +12,59 @@ import ErrorStyles from '../styles/error';
 import TextInput from './TextInput';
 
 export default function SignupDetailsForm({ onSignup, onGoBack }) {
-	const {
-		control,
-		handleSubmit,
-		formState: { errors },
-	} = useForm({ defaultValues: { firstName: '', lastName: '' }, resolver: yupResolver(DetailsSchema) });
+  const {
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    defaultValues: { firstName: '', lastName: '' },
+    resolver: yupResolver(DetailsSchema),
+  });
 
-	const theme = useTheme();
+  const theme = useTheme();
 
-	return (
-		<View style={FormStyles.container}>
-			<View style={FormStyles.titleContainer}>
-				{onGoBack && <Ionicons style={FormStyles.icon} name="arrow-back" size={32} color="black" onPress={onGoBack} />}
-				<Title style={FormStyles.title}>Details</Title>
-			</View>
-			<View style={FormStyles.content}>
-				<View style={FormStyles.item}>
-					<TextInput control={control} name="firstName" label="First Name" />
-					<Caption style={ErrorStyles(theme).caption}>{errors.firstName && capitalise(errors.firstName.message)}</Caption>
-				</View>
-				<View style={FormStyles.item}>
-					<TextInput control={control} name="lastName" label="Last Name" />
-					<Caption style={ErrorStyles(theme).caption}>{errors.lastName && capitalise(errors.lastName.message)}</Caption>
-				</View>
-			</View>
-			<View style={FormStyles.content}>
-				<Button style={FormStyles.signup} onPress={handleSubmit(onSignup)} mode="contained">
-					Continue
-				</Button>
-			</View>
-		</View>
-	);
+  return (
+    <View style={FormStyles.container}>
+      <View style={FormStyles.titleContainer}>
+        {onGoBack && (
+          <Ionicons
+            style={FormStyles.icon}
+            name="arrow-back"
+            size={32}
+            color="black"
+            onPress={onGoBack}
+          />
+        )}
+        <Title style={FormStyles.title}>Details</Title>
+      </View>
+      <View style={FormStyles.content}>
+        <View style={FormStyles.item}>
+          <TextInput control={control} name="firstName" label="First Name" />
+          <Caption style={ErrorStyles(theme).caption}>
+            {errors.firstName && capitalise(errors.firstName.message)}
+          </Caption>
+        </View>
+        <View style={FormStyles.item}>
+          <TextInput control={control} name="lastName" label="Last Name" />
+          <Caption style={ErrorStyles(theme).caption}>
+            {errors.lastName && capitalise(errors.lastName.message)}
+          </Caption>
+        </View>
+      </View>
+      <View style={FormStyles.content}>
+        <Button style={FormStyles.signup} onPress={handleSubmit(onSignup)} mode="contained">
+          Continue
+        </Button>
+      </View>
+    </View>
+  );
 }
 
 SignupDetailsForm.propTypes = {
-	onSignup: PropTypes.func.isRequired,
-	onGoBack: PropTypes.func,
+  onSignup: PropTypes.func.isRequired,
+  onGoBack: PropTypes.func,
 };
 
 SignupDetailsForm.defaultProps = {
-	onGoBack: null,
+  onGoBack: null,
 };

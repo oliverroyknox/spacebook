@@ -7,14 +7,15 @@ A Facebook clone made in React Native, using a [RESTful API](https://github.com/
 ## Getting Started
 
 1. Install dependencies
-	```bash
-	npm install
-	```
+
+   ```bash
+   npm install
+   ```
 
 2. Run the application
-	```bash
-	npm start
-	```
+   ```bash
+   npm start
+   ```
 
 ## Repository
 
