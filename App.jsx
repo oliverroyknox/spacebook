@@ -27,8 +27,10 @@ export default function App() {
         const { ok } = await getUser({ userId, sessionToken });
         if (!ok) return;
 
-        setCurrentUserId(Number(userId));
-        setIsAuthenticated(true);
+        setTimeout(() => {
+          setCurrentUserId(Number(userId));
+          setIsAuthenticated(true);
+        }, 300);
       }
     } catch (err) {
       setCurrentUserId(-1);
@@ -51,11 +53,18 @@ export default function App() {
   const onUnauthenticate = async () => {
     await AsyncStorage.removeItem('user_id');
     await AsyncStorage.removeItem('session_token');
-    setIsAuthenticated(false);
     setCurrentUserId(-1);
+    setIsAuthenticated(false);
   };
 
-  useEffect(loadSavedCredentials, []);
+  useEffect(() => {
+    loadSavedCredentials();
+
+    return () => {
+      setCurrentUserId(-1);
+      setIsAuthenticated(false);
+    }
+  }, []);
 
   return (
     <PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>

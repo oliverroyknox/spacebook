@@ -348,7 +348,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
     const authUserId = Number(await AsyncStorage.getItem('user_id'));
     setSignedInUserId(authUserId);
 
-    const profileIsFriend = await checkFriendship({ sessionToken, isFriendOf: authUserId });
+    const profileIsFriend = await checkFriendship({ sessionToken, friendOfId: authUserId });
 
     // only load posts of friends or self.
     if (profileIsFriend || userId === authUserId) {
