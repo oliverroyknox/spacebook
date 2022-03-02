@@ -13,9 +13,14 @@ A Facebook clone made in React Native, using a [RESTful API](https://github.com/
    ```
 
 2. Run the application
+
    ```bash
    npm start
    ```
+
+## Style Guide
+
+The [Airbnb Style Guide](https://github.com/airbnb/javascript) with a basic prettier config is used to enforce code style.
 
 ## Repository
 
