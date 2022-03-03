@@ -66,7 +66,12 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
     const { ok, body } = await getProfilePhoto({ userId, sessionToken });
 
     if (ok) {
-      setProfilePhoto(await toDataUrl(body));
+      try {
+        setProfilePhoto(await toDataUrl(body));
+      } catch (err) {
+        console.log(err);
+        setProfilePhoto('');
+      }
     }
   }
 

@@ -7,7 +7,7 @@ const style = StyleSheet.create({
     justifyContent: 'flex-end',
   },
   touchable: {
-    borderRadius: '50%',
+    borderRadius: 12,
   },
 });
 
