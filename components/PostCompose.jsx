@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { Card, TextInput, Button } from 'react-native-paper';
 import { Controller, useForm } from 'react-hook-form';
@@ -6,8 +6,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { PostSchema } from '../schema';
 import PostStyles from '../styles/post';
 
-export default function PostCompose({ onPost }) {
-  const { control, handleSubmit, reset } = useForm({
+export default function PostCompose({ text, onPost, onSaveDraft }) {
+  const { control, handleSubmit, setValue, reset } = useForm({
     defaultValues: { text: '' },
     resolver: yupResolver(PostSchema),
   });
@@ -17,6 +17,15 @@ export default function PostCompose({ onPost }) {
     reset();
     onPost(data);
   };
+
+  const onSaveDraftWithReset = (data) => {
+    reset();
+    onSaveDraft(data);
+  };
+
+  useEffect(() => {
+    setValue('text', text);
+  }, [text]);
 
   return (
     <Card mode="outlined">
@@ -37,7 +46,14 @@ export default function PostCompose({ onPost }) {
           )}
         />
       </Card.Content>
-      <Card.Actions style={PostStyles.singleAction}>
+      <Card.Actions style={PostStyles.actions}>
+        <Button
+          icon="save"
+          contentStyle={PostStyles.button}
+          onPress={handleSubmit(onSaveDraftWithReset)}
+        >
+          Save Draft
+        </Button>
         <Button
           icon="send"
           contentStyle={PostStyles.button}
@@ -51,5 +67,7 @@ export default function PostCompose({ onPost }) {
 }
 
 PostCompose.propTypes = {
+  text: PropTypes.string.isRequired,
   onPost: PropTypes.func.isRequired,
+  onSaveDraft: PropTypes.func.isRequired,
 };

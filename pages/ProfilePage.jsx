@@ -26,6 +26,7 @@ import PageStyles from '../styles/page';
 import PostStyles from '../styles/post';
 import ProfileHero from '../components/ProfileHero';
 import ProfileEdit from '../components/ProfileEdit';
+import DraftView from '../components/DraftView';
 import Divider from '../components/Divider';
 import PostCompose from '../components/PostCompose';
 import Post from '../components/Post';
@@ -41,11 +42,14 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
   const [user, setUser] = useState(null);
   const [profilePhoto, setProfilePhoto] = useState('');
   const [posts, setPosts] = useState([]);
+  const [composeText, setComposeText] = useState('');
+  const [drafts, setDrafts] = useState([]);
   const [focusedPost, setFocusedPost] = useState(null);
   const [editingPost, setEditingPost] = useState(null);
   const [deletingPost, setDeletingPost] = useState(null);
   const [isDialogVisible, setIsDialogVisible] = useState(false);
   const [isProfileModalVisible, setIsProfileModalVisible] = useState(false);
+  const [isDraftModalVisible, setIsDraftModalVisible] = useState(false);
   const [isPostModalVisible, setIsPostModalVisible] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [isSnackbarVisible, setIsSnackbarVisible] = useState(false);
@@ -71,6 +75,17 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 
     if (ok) {
       setPosts(body);
+    }
+  }
+
+  async function loadDrafts() {
+    try {
+      const drafts = await AsyncStorage.getItem('drafts');
+      if (drafts) {
+        setDrafts(JSON.parse(drafts));
+      }
+    } catch (err) {
+      setDrafts([]);
     }
   }
 
@@ -101,6 +116,8 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
   };
 
   const onDismissProfileModal = () => setIsProfileModalVisible(false);
+
+  const onDismissDraftModal = () => setIsDraftModalVisible(false);
 
   const onDismissPostModal = () => {
     setIsPostModalVisible(false);
@@ -151,6 +168,8 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
 
   const onEditProfile = () => setIsProfileModalVisible(true);
 
+  const onViewDrafts = () => setIsDraftModalVisible(true);
+
   const onSaveProfile = async ({ firstName, lastName, profilePhoto: photo }) => {
     onDismissProfileModal();
 
@@ -188,6 +207,41 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
       return showSnackbar(updateUserResponse.message);
     } catch (err) {
       return showSnackbar('failed to save changes, try again later.');
+    }
+  };
+
+  async function deleteDraft({ id }) {
+    const existingDraftsJson = await AsyncStorage.getItem('drafts');
+
+    if (existingDraftsJson) {
+      const existingDrafts = JSON.parse(existingDraftsJson);
+      const newDrafts = existingDrafts.filter((draft) => draft.id !== id);
+
+      await AsyncStorage.setItem('drafts', JSON.stringify(newDrafts));
+      setDrafts(newDrafts);
+    }
+  }
+
+  const onEditDraft = async ({ id, text }) => {
+    try {
+      // updates `PostCompose` component with draft text and removes the draft from storage.
+      // the intent is for the user to post or save the draft again.
+      setComposeText(text);
+      await deleteDraft({ id });
+
+      onDismissDraftModal();
+    } catch (err) {
+      return showSnackbar('failed to load draft, try again later.');
+    }
+  };
+
+  const onDeleteDraft = async ({ id }) => {
+    try {
+      await deleteDraft({ id });
+
+      return showSnackbar('deleted draft.');
+    } catch (err) {
+      return showSnackbar('failed to delete draft, try again later.');
     }
   };
 
@@ -230,6 +284,27 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
       return showSnackbar(response.message);
     } catch (err) {
       return showSnackbar('failed to create a post, try again later.');
+    }
+  };
+
+  const onSaveDraft = async ({ text }) => {
+    try {
+      const draft = { id: Date.now(), text };
+
+      // get json in storage or create a new array.
+      const existingDraftsJson = await AsyncStorage.getItem('drafts');
+      const existingDrafts = existingDraftsJson ? JSON.parse(existingDraftsJson) : [];
+
+      // append new draft to previously stored drafts.
+      const newDrafts = [...existingDrafts, draft];
+
+      // store in local storage and update state.
+      await AsyncStorage.setItem('drafts', JSON.stringify(newDrafts));
+      setDrafts(newDrafts);
+
+      return showSnackbar('saved draft.');
+    } catch (err) {
+      return showSnackbar('failed to save draft, try again later.');
     }
   };
 
@@ -357,6 +432,11 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
       setPosts([]);
     }
 
+    // only load drafts for self.
+    if (userId === authUserId) {
+      await loadDrafts();
+    }
+
     return () => {
       setUser(null);
       setProfilePhoto('');
@@ -372,6 +452,7 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
         user={user}
         isNested={userId !== signedInUserId}
         onEdit={onEditProfile}
+        onViewDrafts={onViewDrafts}
         onLogout={onLogout}
         onGoToHome={onGoToHome}
       />
@@ -383,7 +464,9 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
           style={PostStyles.postList}
           contentContainerStyle={PostStyles.postListContent}
           data={posts}
-          ListHeaderComponent={<PostCompose onPost={onPost} />}
+          ListHeaderComponent={
+            <PostCompose text={composeText} onPost={onPost} onSaveDraft={onSaveDraft} />
+          }
           ListHeaderComponentStyle={PostStyles.postListContent}
           renderItem={renderPost}
           keyExtractor={(item) => item.postId}
@@ -409,6 +492,15 @@ export default function ProfilePage({ userId, setUserId, onUnauthenticate }) {
             onSave={onSaveProfile}
           />
         )}
+      </Portal>
+      <Portal>
+        <DraftView
+          visible={isDraftModalVisible}
+          onDismiss={onDismissDraftModal}
+          drafts={drafts}
+          onEditDraft={onEditDraft}
+          onDeleteDraft={onDeleteDraft}
+        />
       </Portal>
       <Portal>
         <Modal

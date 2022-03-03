@@ -9,6 +9,7 @@ export default function ProfileHero({
   user,
   isNested,
   onEdit,
+  onViewDrafts,
   onLogout,
   onGoToHome,
 }) {
@@ -44,6 +45,11 @@ export default function ProfileHero({
           }
         >
           <Menu.Item onPress={() => handleMenuPress(onEdit)} icon="create" title="Edit Profile" />
+          <Menu.Item
+            onPress={() => handleMenuPress(onViewDrafts)}
+            icon="document-text"
+            title="View Drafts"
+          />
           <Divider />
           <Menu.Item onPress={() => handleMenuPress(onLogout)} icon="log-out" title="Logout" />
         </Menu>
@@ -65,6 +71,7 @@ ProfileHero.propTypes = {
   }),
   isNested: PropTypes.bool.isRequired,
   onEdit: PropTypes.func.isRequired,
+  onViewDrafts: PropTypes.func.isRequired,
   onLogout: PropTypes.func.isRequired,
   onGoToHome: PropTypes.func.isRequired,
 };

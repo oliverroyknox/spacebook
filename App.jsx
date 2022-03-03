@@ -63,7 +63,7 @@ export default function App() {
     return () => {
       setCurrentUserId(-1);
       setIsAuthenticated(false);
-    }
+    };
   }, []);
 
   return (
