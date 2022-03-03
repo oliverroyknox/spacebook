@@ -10,6 +10,17 @@ const styles = ({ colors }) =>
       padding: 16,
       marginHorizontal: 16,
     },
+    calendarModal: {
+      padding: 16,
+      marginHorizontal: 16,
+    },
+    calendarWrapper: {
+      backgroundColor: colors.page,
+      padding: 16,
+    },
+    calendar: {
+      padding: 16,
+    },
     list: {
       width: '100%',
     },
