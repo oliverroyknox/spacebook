@@ -31,7 +31,9 @@
     "react-native-screens": "~3.10.1",
     "react-native-swiper-flatlist": "^3.0.16",
     "react-native-web": "0.17.1",
-    "yup": "^0.32.11"
+    "yup": "^0.32.11",
+    "expo-background-fetch": "~10.1.0",
+    "expo-task-manager": "~10.1.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

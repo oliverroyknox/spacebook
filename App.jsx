@@ -5,6 +5,10 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
 import Theme from './theme';
 import { getUser } from './api/requests';
+import {
+  registerBackgroundPostTask,
+  unregisterBackgroundPostTask,
+} from './helpers/background-fetch';
 
 import AuthNavigator from './navigation/AuthNavigator';
 import ContentNavigator from './navigation/ContentNavigator';
@@ -65,6 +69,19 @@ export default function App() {
       setIsAuthenticated(false);
     };
   }, []);
+
+  useEffect(async () => {
+    // cleanup and registed a new background task when the user is authenticated.
+    if (isAuthenticated) {
+      try {
+        await unregisterBackgroundPostTask();
+      } catch (err) {
+        console.log({ err });
+      }
+
+      await registerBackgroundPostTask();
+    }
+  }, [isAuthenticated]);
 
   return (
     <PaperProvider theme={Theme} settings={{ icon: renderIonicon }}>

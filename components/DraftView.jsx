@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FlatList, View } from 'react-native';
 import { Portal, Modal, Paragraph, Title, useTheme, Button } from 'react-native-paper';
 import { Calendar } from 'react-native-calendars';
@@ -10,7 +11,7 @@ export default function DraftView({ visible, onDismiss, drafts, onEditDraft, onD
   const theme = useTheme();
 
   const [focusedDraft, setFocusedDraft] = useState(null);
-  const [currentDate, setCurrentDate] = useState(new Date(Date.now()).toLocaleDateString('en-'));
+  const [currentDate, setCurrentDate] = useState(new Date(Date.now()).toLocaleDateString('en-GB'));
   const [isCalendarModalVisible, setIsCalendarModalVisible] = useState(false);
 
   const onDismissCalendarModal = () => setIsCalendarModalVisible(false);
@@ -20,9 +21,19 @@ export default function DraftView({ visible, onDismiss, drafts, onEditDraft, onD
     setIsCalendarModalVisible(true);
   };
 
-  const onSetBackgroundTask = ({ draft, date }) => {
-    // TODO: set background task with draft.
-    console.log({ draft, date });
+  const onSetBackgroundTask = async ({ draft, date }) => {
+    const timestamp = new Date(date).getTime();
+
+    const scheduleJson = await AsyncStorage.getItem('in_schedule');
+    let schedule = scheduleJson ? JSON.parse(scheduleJson) : [];
+
+    // background task reads async storage to check what items are in the schedule.
+    await AsyncStorage.setItem('in_schedule', JSON.stringify([...schedule, { draft, timestamp }]));
+
+    // delete draft from the storage to prevent duplicate scheduling.
+    await onDeleteDraft(draft);
+
+    onDismissCalendarModal();
   };
 
   function renderDraft({ item: draft }) {
@@ -81,4 +92,6 @@ DraftView.propTypes = {
       text: PropTypes.string.isRequired,
     })
   ).isRequired,
+  onEditDraft: PropTypes.func.isRequired,
+  onDeleteDraft: PropTypes.func.isRequired,
 };
