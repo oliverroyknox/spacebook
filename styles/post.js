@@ -15,6 +15,8 @@ const styles = StyleSheet.create({
   },
   actions: {
     flex: 1,
+    minHeight: 32,
+    backgroundColor: '#fff',
     justifyContent: 'space-between',
   },
   actionsWrapper: {
