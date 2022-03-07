@@ -19,8 +19,12 @@ TaskManager.defineTask(BACKGROUND_FETCH_TASK, async () => {
   for (const task of schedule) {
     const { draft, timestamp } = task;
 
-    if (timestamp >= now) {
+    if (timestamp <= now) {
       await createPost({ userId, sessionToken, text: draft.text });
+      await AsyncStorage.setItem(
+        'in_schedule',
+        JSON.stringify(schedule.filter((task) => task.timestamp !== timestamp))
+      );
       isReadyForUpdate = true;
     }
   }

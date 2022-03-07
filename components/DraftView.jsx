@@ -30,9 +30,6 @@ export default function DraftView({ visible, onDismiss, drafts, onEditDraft, onD
     // background task reads async storage to check what items are in the schedule.
     await AsyncStorage.setItem('in_schedule', JSON.stringify([...schedule, { draft, timestamp }]));
 
-    // delete draft from the storage to prevent duplicate scheduling.
-    await onDeleteDraft(draft);
-
     onDismissCalendarModal();
   };
 
