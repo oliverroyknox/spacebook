@@ -57,8 +57,8 @@ export default function App() {
   const onUnauthenticate = async () => {
     await AsyncStorage.removeItem('user_id');
     await AsyncStorage.removeItem('session_token');
-    setCurrentUserId(-1);
     setIsAuthenticated(false);
+    setCurrentUserId(-1);
   };
 
   useEffect(() => {
