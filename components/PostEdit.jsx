@@ -32,7 +32,7 @@ export default function PostEdit({ post, onSave }) {
           render={({ field: { onChange, onBlur, value } }) => (
             <TextInput
               onBlur={onBlur}
-              onChange={onChange}
+              onChangeText={onChange}
               value={value}
               placeholder="Write your post here..."
               mode="outlined"
