@@ -79,7 +79,11 @@ export default function App() {
         console.log({ err });
       }
 
-      await registerBackgroundPostTask();
+      try {
+        await registerBackgroundPostTask();
+      } catch (err) {
+        console.log({ err });
+      }
     }
   }, [isAuthenticated]);
 
